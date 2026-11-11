@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 21 Oct 2026 08:35:05 +0400
-Subject: fix settings camera button clipping on fractional density
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix settings camera button clipping on fractional density
 
 ---
  .../src/main/java/org/telegram/ui/SettingsActivity.java        | 3 +--

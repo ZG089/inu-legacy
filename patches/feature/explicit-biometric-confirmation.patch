@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Uladzislau Hramyka <awayfromgalaxy@gmail.com>
 Date: Sun, 20 Sep 2026 00:55:31 +0300
-Subject: Allow configuring explicit biometric confirmation
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Allow configuring explicit biometric confirmation
 
 ---
  .../src/main/java/org/telegram/ui/Components/PasscodeView.java   | 1 +

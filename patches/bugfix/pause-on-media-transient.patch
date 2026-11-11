@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Tue, 26 May 2026 22:58:30 +0400
-Subject: use AUDIOFOCUS_GAIN_TRANSIENT for voice/round when "pause music on media" is set
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: use AUDIOFOCUS_GAIN_TRANSIENT for voice/round when "pause music on media" is set
 
 ---
  .../src/main/java/org/telegram/messenger/MediaController.java   | 2 +-

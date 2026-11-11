@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 29 Apr 2026 17:59:48 +0300
-Subject: option to disable scrim blur throughout the app
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: option to disable scrim blur throughout the app
 
 ---
  .../telegram/messenger/AndroidUtilities.java    |  7 +++++++

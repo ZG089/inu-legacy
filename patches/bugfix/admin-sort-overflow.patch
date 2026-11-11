@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 23 Jul 2026 10:52:26 +0400
-Subject: fix crash after transferring channel ownership
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix crash after transferring channel ownership
 
 ---
  .../src/main/java/org/telegram/ui/ChatUsersActivity.java        | 2 +-

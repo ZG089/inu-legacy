@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 20:50:44 +0400
-Subject: temporary patch adding debug logs for black screen when opening crop in PhotoViewer
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: temporary patch adding debug logs for black screen when opening crop in PhotoViewer
 
 ---
  .../main/java/org/telegram/ui/Components/Crop/CropView.java  | 3 +++

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Tue, 12 May 2026 14:58:17 +0200
-Subject: force system font for ui
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: force system font for ui
 
 ---
  TMessagesProj/build.gradle                    |  1 +

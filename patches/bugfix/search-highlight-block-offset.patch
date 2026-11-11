@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 17:45:53 +0400
-Subject: fix search highlight offset in messages with quotes/code blocks
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix search highlight offset in messages with quotes/code blocks
 
 ---
  .../telegram/ui/Cells/ChatMessageCell.java    | 36 ++++++++-----------

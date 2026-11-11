@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 00:26:09 +0400
-Subject: fix crash when video cover frame fails to decode
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix crash when video cover frame fails to decode
 
 ---
  .../main/java/org/telegram/ui/Components/EditCoverButton.java | 4 ++++

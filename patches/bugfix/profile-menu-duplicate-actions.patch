@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 29 Jul 2026 05:21:25 +0400
-Subject: duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
 
 ---
  .../src/main/java/org/telegram/ui/ProfileActivity.java          | 2 +-

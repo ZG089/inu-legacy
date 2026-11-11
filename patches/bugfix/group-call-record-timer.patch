@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 05:14:07 +0400
-Subject: fix nonsense group call recording timer before the start date arrives
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix nonsense group call recording timer before the start date arrives
 
 ---
  .../src/main/java/org/telegram/ui/GroupCallActivity.java        | 2 +-

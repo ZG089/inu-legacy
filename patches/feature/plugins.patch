@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 2 Sep 2026 05:51:47 +0400
-Subject: Add the QuickJS plugin engine (hooks, action rows)
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Add the QuickJS plugin engine (hooks, action rows)
 
 ---
  TMessagesProj/jni/gifvideo.cpp                |  13 ++

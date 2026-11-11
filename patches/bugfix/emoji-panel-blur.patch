@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Sun, 11 Oct 2026 03:43:24 +0300
-Subject: Respect Power Saving blur setting in the emoji panel
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Respect Power Saving blur setting in the emoji panel
 
 ---
  .../drawable/color/impl/BlurredBackgroundProviderImpl.java    | 4 ++++

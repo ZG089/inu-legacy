@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 04:20:18 +0400
-Subject: temporary patch adding debug logs for some intermittent large video upload failure
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: temporary patch adding debug logs for some intermittent large video upload failure
 
 ---
  .../main/java/org/telegram/messenger/AutoDeleteMediaTask.java | 2 ++

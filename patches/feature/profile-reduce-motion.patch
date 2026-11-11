@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Tue, 12 May 2026 19:57:59 +0200
-Subject: reduce motion in profile
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: reduce motion in profile
 
 ---
  .../ui/Components/ProfileActionsView.java     |  4 +++

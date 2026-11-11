@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 29 May 2026 00:05:33 +0400
-Subject: disable channels quick share on long tap
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: disable channels quick share on long tap
 
 ---
  .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 3 ++-

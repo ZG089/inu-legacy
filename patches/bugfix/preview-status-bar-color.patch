@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 3 Nov 2026 21:18:04 +0400
-Subject: fix status bar icon color when expanding or closing chat preview
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix status bar icon color when expanding or closing chat preview
 
 ---
  .../main/java/org/telegram/ui/ActionBar/ActionBarLayout.java  | 4 ++--

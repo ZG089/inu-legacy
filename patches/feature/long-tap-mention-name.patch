@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Sun, 17 May 2026 15:35:30 +0400
-Subject: long-tap user in mentions suggestions for a custom name-mention
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: long-tap user in mentions suggestions for a custom name-mention
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java    | 10 +++++++++-

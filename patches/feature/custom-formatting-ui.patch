@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 20 Apr 2026 09:36:16 +0300
-Subject: custom formatting ui for rich text fields with better ux
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: custom formatting ui for rich text fields with better ux
 
 ---
  .../ui/Components/ChatActivityEnterView.java       |  2 +-

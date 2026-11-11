@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 26 Jul 2026 17:53:34 +0400
-Subject: fix sticky date pill in chat jumping when sticking
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix sticky date pill in chat jumping when sticking
 
 ---
  .../java/org/telegram/ui/Cells/ChatActionCell.java  | 13 +++----------

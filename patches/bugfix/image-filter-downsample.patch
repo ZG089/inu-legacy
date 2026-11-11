@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Sat, 4 Jul 2026 03:43:31 +0400
-Subject: fix blurry filtered images decoded below the requested size
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix blurry filtered images decoded below the requested size
 
 ---
  .../src/main/java/org/telegram/messenger/ImageLoader.java     | 4 ++--

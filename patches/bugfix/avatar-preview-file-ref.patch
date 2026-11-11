@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 15:54:35 +0400
-Subject: fix avatar long-press preview stuck on blurred placeholder
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix avatar long-press preview stuck on blurred placeholder
 
 ---
  .../src/main/java/org/telegram/ui/AvatarPreviewer.java    | 8 ++++----

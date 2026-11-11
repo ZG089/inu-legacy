@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Mon, 26 Oct 2026 01:08:17 +0300
-Subject: Enable video editing when Android provides a decoder
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Enable video editing when Android provides a decoder
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java    |  6 ++++++

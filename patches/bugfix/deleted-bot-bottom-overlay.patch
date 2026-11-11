@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 11 Oct 2026 17:41:40 +0200
-Subject: fix deleted bot bottom overlay
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix deleted bot bottom overlay
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 4 ++++

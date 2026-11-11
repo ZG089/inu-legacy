@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 22 Apr 2026 08:10:29 +0300
-Subject: disable "motion photos" throughout the app, both sending and rendering
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: disable "motion photos" throughout the app, both sending and rendering
 
 ---
  .../main/java/org/telegram/messenger/MediaController.java  | 3 ++-

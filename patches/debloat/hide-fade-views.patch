@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 13 Apr 2026 03:28:49 +0300
-Subject: hide fade views
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hide fade views
 
 ---
  .../org/telegram/ui/Components/ChatAttachAlert.java  |  2 ++

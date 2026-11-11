@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 18 Oct 2026 00:54:43 +0200
-Subject: keep cached channel history on updateChannelDifferenceTooLong and drop messages missing from loaded history
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: keep cached channel history on updateChannelDifferenceTooLong and drop messages missing from loaded history
 
 ---
  .../telegram/messenger/MediaController.java   |  3 +-

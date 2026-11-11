@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 17:39:41 +0400
-Subject: fix newly scheduled messages disappearing until reload
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix newly scheduled messages disappearing until reload
 
 ---
  .../src/main/java/org/telegram/messenger/MessagesStorage.java  | 3 +++

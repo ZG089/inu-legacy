@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 19:59:44 +0400
-Subject: Fix NPE binding reorder state on cached holders in UniversalAdapter
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix NPE binding reorder state on cached holders in UniversalAdapter
 
 ---
  .../java/org/telegram/ui/Components/UniversalAdapter.java    | 5 +++--

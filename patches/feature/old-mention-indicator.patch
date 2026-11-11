@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 20 Apr 2026 17:00:30 +0300
-Subject: forward-port of the old (pre-12.6) mention and reaction indicators
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: forward-port of the old (pre-12.6) mention and reaction indicators
 
 ---
  .../org/telegram/ui/Cells/DialogCell.java     | 31 +++++++++++++++++--

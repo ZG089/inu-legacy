@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 24 Aug 2026 02:34:03 +0300
-Subject: ignore late emoji suggestion results after input changed
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: ignore late emoji suggestion results after input changed
 
 ---
  .../main/java/org/telegram/ui/Adapters/MentionsAdapter.java | 6 ++++++

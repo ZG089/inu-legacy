@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 14 Oct 2026 02:44:14 +0200
-Subject: add Open Profile to join request preview menu
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: add Open Profile to join request preview menu
 
 ---
  .../ui/Delegates/MemberRequestsDelegate.java    | 17 +++++++++++++++++

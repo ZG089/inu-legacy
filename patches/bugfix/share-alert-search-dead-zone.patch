@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 04:07:21 +0400
-Subject: Fix unclickable share sheet search results
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix unclickable share sheet search results
 
 ---
  .../src/main/java/org/telegram/ui/Components/ShareAlert.java  | 4 ++--

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 21:58:13 +0400
-Subject: fix frozen account bar overlapping message search
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix frozen account bar overlapping message search
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java       | 8 ++++----

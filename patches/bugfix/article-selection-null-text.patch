@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 16:08:40 +0400
-Subject: fix crash copying multi-block article selection with empty blocks
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix crash copying multi-block article selection with empty blocks
 
 ---
  .../java/org/telegram/ui/Cells/TextSelectionHelper.java     | 6 +++++-

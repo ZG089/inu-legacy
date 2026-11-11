@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 9 Oct 2026 02:45:43 +0200
-Subject: customizable edit date mode (send date vs edit date)
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: customizable edit date mode (send date vs edit date)
 
 ---
  .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 ++--

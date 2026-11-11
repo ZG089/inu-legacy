@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: polina4096 <polina4096@icloud.com>
 Date: Fri, 22 May 2026 00:16:18 +0400
-Subject: Configurable text + media spoiler styles, with line-extension toggle
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Configurable text + media spoiler styles, with line-extension toggle
 
 ---
  .../org/telegram/ui/Cells/ChatMessageCell.java  | 10 ++++++++--

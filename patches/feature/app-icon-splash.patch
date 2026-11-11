@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Wed, 14 Oct 2026 19:37:05 +0300
-Subject: match splash screen to the selected app icon and monet theme
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: match splash screen to the selected app icon and monet theme
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java  | 1 +

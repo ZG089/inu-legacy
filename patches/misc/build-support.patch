@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 26 Sep 2026 21:53:56 +0400
-Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
  .gitmodules                                   |   3 +

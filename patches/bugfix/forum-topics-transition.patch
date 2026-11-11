@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 4 Nov 2026 01:08:20 +0400
-Subject: fix dialog list jumping when opening and closing forum topics
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix dialog list jumping when opening and closing forum topics
 
 ---
  .../java/org/telegram/ui/DialogsActivity.java | 51 +++++++++----------

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 8 Oct 2026 06:30:13 +0300
-Subject: correctly update server-detected links in sent messages
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: correctly update server-detected links in sent messages
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java | 13 ++++++++++++-

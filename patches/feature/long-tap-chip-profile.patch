@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 24 Aug 2026 01:53:10 +0300
-Subject: open profile by long tapping a selected user chip
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: open profile by long tapping a selected user chip
 
 ---
  .../src/main/java/org/telegram/ui/GroupCreateActivity.java     | 3 +++

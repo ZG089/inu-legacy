@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 7 Nov 2026 23:41:00 +0400
-Subject: respect lite mode blur setting in glass panels
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: respect lite mode blur setting in glass panels
 
 ---
  .../telegram/ui/Components/ProfileButtonsGlass.java |  7 ++++---

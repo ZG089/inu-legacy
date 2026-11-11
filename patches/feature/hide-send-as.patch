@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 13 May 2026 16:01:53 +0200
-Subject: hide "send as" behind long-tapping the stickers button
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hide "send as" behind long-tapping the stickers button
 
 ---
  .../telegram/ui/Components/ChatActivityEnterView.java | 11 ++++++++++-

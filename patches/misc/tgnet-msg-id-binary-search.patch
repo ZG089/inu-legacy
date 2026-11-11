@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 24 Oct 2026 21:02:04 +0400
-Subject: look up processed msg_ids with binary search
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: look up processed msg_ids with binary search
 
 ---
  TMessagesProj/jni/tgnet/ConnectionSession.cpp | 7 +++----

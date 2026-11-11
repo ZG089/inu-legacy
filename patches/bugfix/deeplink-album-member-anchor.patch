@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 25 Jun 2026 02:42:26 +0400
-Subject: fix deeplinking to a non-primary album member sometimes mis-anchoring
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix deeplinking to a non-primary album member sometimes mis-anchoring
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 +++++++

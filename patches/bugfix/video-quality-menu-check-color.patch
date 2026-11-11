@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 6 Nov 2026 21:39:55 +0400
-Subject: fix black checkmark in the video quality menu on light themes
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix black checkmark in the video quality menu on light themes
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 2 +-

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 17 Oct 2026 22:26:33 +0200
-Subject: fix sqlite picking slow plans on some storage queries
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix sqlite picking slow plans on some storage queries
 
 ---
  .../messenger/MediaDataController.java        |  2 +-

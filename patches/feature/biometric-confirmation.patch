@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 1 Jul 2026 18:07:39 +0400
-Subject: client-side biometric confirmation in various places
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: client-side biometric confirmation in various places
 
 ---
  .../java/org/telegram/ui/CalendarActivity.java     |  4 ++++

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 10 Oct 2026 03:34:51 +0200
-Subject: various fixes for stale unread reactions
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: various fixes for stale unread reactions
 
 ---
  .../org/telegram/messenger/MessageObject.java |   3 +-

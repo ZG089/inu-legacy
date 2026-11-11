@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 23 Jul 2026 12:29:15 +0400
-Subject: non-island ui in various parts of the app
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: non-island ui in various parts of the app
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  |  53 +++---

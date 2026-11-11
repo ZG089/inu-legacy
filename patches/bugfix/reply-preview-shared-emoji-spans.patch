@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 02:07:27 +0400
-Subject: Fix big emoji glitching and sizing when shown in reply previews
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix big emoji glitching and sizing when shown in reply previews
 
 ---
  .../main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 6 ++----

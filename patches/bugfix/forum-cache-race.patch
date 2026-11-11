@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 9 Oct 2026 19:17:01 +0200
-Subject: serialize forum type cache access
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: serialize forum type cache access
 
 ---
  .../src/main/java/org/telegram/messenger/MessagesStorage.java | 4 ++--

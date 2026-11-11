@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Nika Krasnova <nika@nikableh.moe>
 Date: Sat, 3 Oct 2026 23:47:30 +0200
-Subject: Preserve image quality across sticker cutout edits
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Preserve image quality across sticker cutout edits
 
 ---
  .../ui/Components/Paint/Painting.java         | 10 ++++-

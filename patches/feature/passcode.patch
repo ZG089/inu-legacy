@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Sun, 17 May 2026 19:22:29 +0400
-Subject: passcode-related features (per-account pin, panic pin, hidden accounts)
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: passcode-related features (per-account pin, panic pin, hidden accounts)
 
 ---
  .../org/telegram/messenger/MessagesController.java     |  5 ++++-

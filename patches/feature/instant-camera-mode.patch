@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 9 Apr 2026 04:55:09 +0300
-Subject: customizable instant camera in attach alert (stock/static/fab/tab)
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: customizable instant camera in attach alert (stock/static/fab/tab)
 
 ---
  .../ui/Components/ChatAttachAlert.java        | 33 ++++++++++--

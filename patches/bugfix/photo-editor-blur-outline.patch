@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 12 Oct 2026 02:44:04 +0200
-Subject: fix blur outlines after reopening photo editor
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix blur outlines after reopening photo editor
 
 ---
  .../ui/Components/Paint/Painting.java         | 43 ++++++++++++++++---

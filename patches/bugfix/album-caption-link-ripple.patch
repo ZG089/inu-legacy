@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 29 Jul 2026 06:33:41 +0400
-Subject: fix link ripple in album captions
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix link ripple in album captions
 
 ---
  .../java/org/telegram/ui/Cells/ChatMessageCell.java   | 11 +++++++++++

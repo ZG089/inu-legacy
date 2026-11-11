@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 20 May 2026 22:08:21 +0400
-Subject: paranoia mode (hide chats, accounts, disguise as stock app)
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: paranoia mode (hide chats, accounts, disguise as stock app)
 
 ---
  .../telegram/messenger/AppGlobalConfig.java   | 14 +++++++-

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 28 Oct 2026 17:33:08 +0400
-Subject: actions from other apps in message text selection menu
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: actions from other apps in message text selection menu
 
 ---
  TMessagesProj/src/main/AndroidManifest.xml                    | 4 ++++

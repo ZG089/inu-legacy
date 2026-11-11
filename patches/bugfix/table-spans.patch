@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 15:45:42 +0400
-Subject: fix crash on tables with oversized spans or rows wider than the first
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix crash on tables with oversized spans or rows wider than the first
 
 ---
  .../telegram/messenger/RichMessageLayout.java   |  9 +--------

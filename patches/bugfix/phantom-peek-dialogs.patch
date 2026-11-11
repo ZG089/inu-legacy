@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 25 May 2026 03:24:36 +0400
-Subject: hopefully fix phantom non-joined chats (from channels/comments) appearing in the dialogs list
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hopefully fix phantom non-joined chats (from channels/comments) appearing in the dialogs list
 
 ---
  .../messenger/MessagesController.java         |  4 +++-

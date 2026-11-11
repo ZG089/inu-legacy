@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 18 May 2026 21:24:46 +0400
-Subject: strip tracking parameters from urls
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: strip tracking parameters from urls
 
 ---
  .../messenger/SendMessagesHelper.java         |  7 +++++

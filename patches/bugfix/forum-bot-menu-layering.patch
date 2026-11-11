@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 10 Oct 2026 22:18:49 +0200
-Subject: fix forum bot command menu layering
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix forum bot command menu layering
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 3 ++-

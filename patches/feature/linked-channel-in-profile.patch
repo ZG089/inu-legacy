@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 29 May 2026 02:57:41 +0400
-Subject: show linked channel in discussion group profile similar to personal channel
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show linked channel in discussion group profile similar to personal channel
 
 ---
  .../telegram/ui/Cells/ProfileChannelCell.java | 25 +++++++---

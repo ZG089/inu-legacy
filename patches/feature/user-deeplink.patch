@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 3 Aug 2026 16:24:28 +0400
-Subject: support for tg://user deeplinks
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: support for tg://user deeplinks
 
 ---
  .../java/org/telegram/ui/LaunchActivity.java    | 17 ++++++++++++++++-

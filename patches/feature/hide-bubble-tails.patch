@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 20 Jul 2026 01:39:19 +0400
-Subject: an option to hide bubble tails
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: an option to hide bubble tails
 
 ---
  .../ui/ActionBar/MessageDrawable.java         | 42 ++++++++++++++++++-

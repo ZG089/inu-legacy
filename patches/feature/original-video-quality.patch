@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 10 Jun 2026 01:14:57 +0400
-Subject: "original" toggle in video quality selector to skip re-encoding
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: "original" toggle in video quality selector to skip re-encoding
 
 ---
  .../telegram/messenger/MediaController.java   |  2 +-

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 12 Aug 2026 22:55:15 +0400
-Subject: local overrides for forum topics view
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: local overrides for forum topics view
 
 ---
  .../src/main/java/org/telegram/messenger/ChatObject.java      | 4 ++++

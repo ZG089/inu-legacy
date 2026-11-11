@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 10 Apr 2026 03:04:56 +0300
-Subject: increase account limit to 8, disable premium enforcement
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: increase account limit to 8, disable premium enforcement
 
 ---
  TMessagesProj/jni/tgnet/ConnectionsManager.cpp        | 11 ++++++++++-

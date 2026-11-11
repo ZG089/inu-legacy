@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 10 Apr 2026 05:29:50 +0300
-Subject: hooks into various places inside ChatActivity
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hooks into various places inside ChatActivity
 
 ---
  .../telegram/messenger/AndroidUtilities.java  |   3 +

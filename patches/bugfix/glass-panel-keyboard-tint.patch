@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 03:14:21 +0400
-Subject: Fix out-of-bubble panel tint jumping when the keyboard opens
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix out-of-bubble panel tint jumping when the keyboard opens
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 +++---

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 03:54:04 +0400
-Subject: temporary patch with extra debug logs for reactions
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: temporary patch with extra debug logs for reactions
 
 ---
  .../ChatMessagesMetadataController.java       | 12 ++++++

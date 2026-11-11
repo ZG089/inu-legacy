@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 21:56:07 +0400
-Subject: optimistically handle hidden forwards + properly update bubble on miss
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: optimistically handle hidden forwards + properly update bubble on miss
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java   | 12 +++++++++++-

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 18 Oct 2026 18:10:08 +0200
-Subject: show send gift in profile menu, toggle for header gift action
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show send gift in profile menu, toggle for header gift action
 
 ---
  .../main/java/org/telegram/ui/ProfileActivity.java | 14 +++++++-------

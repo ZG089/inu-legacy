@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 03:22:06 +0400
-Subject: correctly handle notification channels on android 16+, fixes heads-up notifications when there are multiple unread chats
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: correctly handle notification channels on android 16+, fixes heads-up notifications when there are multiple unread chats
 
 ---
  .../messenger/NotificationsController.java    | 406 ++++++++++++------

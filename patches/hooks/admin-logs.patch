@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 23 Apr 2026 18:09:31 +0300
-Subject: hooks inside admin logs activity
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hooks inside admin logs activity
 
 ---
  .../org/telegram/messenger/MessageObject.java |  4 ++

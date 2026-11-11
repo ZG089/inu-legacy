@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 21:24:55 +0400
-Subject: show embedded audio cover in player playlist, matching the player
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show embedded audio cover in player playlist, matching the player
 
 ---
  .../messenger/audioinfo/AudioInfo.java         |  3 +--

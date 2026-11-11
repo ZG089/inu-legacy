@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 6 Nov 2026 22:06:02 +0400
-Subject: fix stale unread mention from breaking "jump to mention" button
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix stale unread mention from breaking "jump to mention" button
 
 ---
  .../java/org/telegram/messenger/MessagesStorage.java   | 10 ++++++----

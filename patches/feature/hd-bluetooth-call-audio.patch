@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 03:02:26 +0400
-Subject: Play call audio as media on Bluetooth to avoid the low-quality HFP profile
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Play call audio as media on Bluetooth to avoid the low-quality HFP profile
 
 ---
  .../telegram/messenger/voip/VoIPService.java  | 41 +++++++++++++++----

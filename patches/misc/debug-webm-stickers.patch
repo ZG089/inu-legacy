@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 20:07:22 +0400
-Subject: temporary patch with extra debug logs for stuck webm stickers
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: temporary patch with extra debug logs for stuck webm stickers
 
 ---
  .../messenger/AnimatedFileDrawableStream.java  |  6 +++++-

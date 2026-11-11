@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 23 Jul 2026 07:36:20 +0400
-Subject: fix dead zones in list rows from hidden clickable children.
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix dead zones in list rows from hidden clickable children.
 
 ---
  .../src/main/java/org/telegram/ui/Cells/UserCell.java          | 1 +

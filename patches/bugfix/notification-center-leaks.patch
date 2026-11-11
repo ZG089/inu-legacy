@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 2 Jul 2026 14:06:47 +0400
-Subject: various leaks related to NotificationCenter delegates not being unregistered
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: various leaks related to NotificationCenter delegates not being unregistered
 
 ---
  .../org/telegram/messenger/FeedWidgetService.java     |  5 ++++-

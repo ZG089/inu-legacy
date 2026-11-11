@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 6 May 2026 15:34:00 +0200
-Subject: customizable dialogs list pull down action
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: customizable dialogs list pull down action
 
 ---
  .../telegram/ui/Adapters/DialogsAdapter.java  |  2 +-

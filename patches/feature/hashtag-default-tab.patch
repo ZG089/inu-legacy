@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 26 Aug 2026 07:33:19 +0400
-Subject: default to "this channel" when tapping hashtag
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: default to "this channel" when tapping hashtag
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-

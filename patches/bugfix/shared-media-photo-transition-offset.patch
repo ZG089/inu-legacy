@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 19:18:19 +0400
-Subject: fix shared media photo transition offset by the grid spacing
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix shared media photo transition offset by the grid spacing
 
 ---
  .../main/java/org/telegram/ui/Components/SharedMediaLayout.java | 2 --

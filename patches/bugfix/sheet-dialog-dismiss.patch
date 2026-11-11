@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 14 Oct 2026 02:29:53 +0200
-Subject: pass dismiss listener to attached sheets showing a dialog
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: pass dismiss listener to attached sheets showing a dialog
 
 while primarily a bugfix for the plugin engine, this is a genuine stock bug that just wasn't as obvious before plugins
 ---

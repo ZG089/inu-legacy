@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 5 Oct 2026 06:09:33 +0400
-Subject: translator-related features
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: translator-related features
 
 ---
  .../messenger/MediaDataController.java        |   2 +-

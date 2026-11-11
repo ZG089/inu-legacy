@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 15 Oct 2026 22:19:42 +0200
-Subject: use adaptive icons for launcher shortcuts
+Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: use adaptive icons for launcher shortcuts
 
 ---
  .../messenger/MediaDataController.java        | 90 +------------------
