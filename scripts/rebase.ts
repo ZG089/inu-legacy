@@ -24,8 +24,6 @@ const resolvedCommit = target === 'latest'
   ? (await repo`git rev-parse upstream/HEAD`).stdout.trim()
   : (await repo`git rev-parse ${target}^{commit}`).stdout.trim()
 
-await writePinnedUpstreamCommit(resolvedCommit)
-
 step(`Rebasing stack onto ${resolvedCommit}`)
 const result = await $({ cwd: worktreeDir, nothrow: true })`stg rebase ${resolvedCommit}`
 
@@ -49,6 +47,7 @@ if (result.exitCode !== 0) {
   process.exit(result.exitCode)
 }
 
+await writePinnedUpstreamCommit(resolvedCommit)
 await syncSubmodules(worktreeDir)
 await applySubmodulePatches(worktreeDir)
 success(`Rebased onto ${resolvedCommit}`)

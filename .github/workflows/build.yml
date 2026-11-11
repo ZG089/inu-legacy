@@ -106,9 +106,11 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin/cargo-ndk
             src/native/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('src/native/Cargo.lock', 'src/native/rust-toolchain.toml') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src/native/Cargo.lock', 'src/native/rust-toolchain.toml') }}-cargo-ndk-4.1.2
           restore-keys: |
+            ${{ runner.os }}-cargo-${{ hashFiles('src/native/Cargo.lock', 'src/native/rust-toolchain.toml') }}-
             ${{ runner.os }}-cargo-
 
       - name: install android rust toolchain
@@ -116,7 +118,9 @@ jobs:
         working-directory: src/native
         run: |
           rustup toolchain install
-          cargo install cargo-ndk --version 4.1.2 --locked
+          if ! cargo ndk --version 2>/dev/null | grep -q '4.1.2'; then
+            cargo install cargo-ndk --version 4.1.2 --locked
+          fi
 
       # the plugin engine's own suite, including every bundled oracle; ubuntu-latest already ships
       # rustup and a stable toolchain
@@ -134,10 +138,10 @@ jobs:
         uses: hendrikmuhs/ccache-action@e42e6681d2906409c5dde4a315af6214eaa890ee # v1.2
         with:
           append-timestamp: true
-          key: ${{ runner.os }}-ndk-27.2-release-${{ matrix.variant }}
+          key: ${{ runner.os }}-ndk-27.2-29.0-release-${{ matrix.variant }}
           restore-keys: |
-            ${{ runner.os }}-ndk-27.2-release-${{ matrix.variant }}
-            ${{ runner.os }}-ndk-27.2-release
+            ${{ runner.os }}-ndk-27.2-29.0-release-${{ matrix.variant }}
+            ${{ runner.os }}-ndk-27.2-29.0-release
             ${{ runner.os }}-
           max-size: 5G
           verbose: 2
@@ -148,7 +152,7 @@ jobs:
       # wallet-engine carries patches-native, so gradle rebuilds it with the toolchain its source pins
       - name: install wallet engine rust target
         working-directory: ${{ matrix.worktree }}/TMessagesProj/jni/gram-wallet
-        run: rustup target add aarch64-linux-android
+        run: rustup target add armv7-linux-androideabi
 
       # the node --check loop plus both tsc projects: the plugin contract, and the bundled plugins
       # against it - a bundled oracle that lost a member reads as a refusal and passes without this
@@ -171,7 +175,7 @@ jobs:
       - name: compute build info
         id: info
         env:
-          INU_BUILD: ${{ vars.INU_BUILD || '1' }}
+          INU_BUILD: ${{ github.repository == 'teidesu/inugram' && vars.INU_BUILD || github.run_number }}
         run: pnpm tsx scripts/ci/version.ts ${{ matrix.variant == 'pluginless' && '--pluginless' || '' }}
 
       - uses: gradle/actions/setup-gradle@0b6dd653ba04f4f93bf581ec31e66cbd7dcb644d # v4
@@ -186,6 +190,7 @@ jobs:
             build-tools;36.0.0
             cmake;3.31.6
             ndk;27.2.12479018
+            ndk;29.0.14206865
 
       - name: tune gradle
         run: |
@@ -212,6 +217,27 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/${{ matrix.worktree }}
         run: ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+
+      - name: verify ARMv7-only APK
+        env:
+          APK_PATH: ${{ matrix.worktree }}/TMessagesProj_App/build/outputs/apk/release/app.apk
+        run: |
+          python3 - <<'PY'
+          import os
+          import zipfile
+
+          apk = os.environ['APK_PATH']
+          with zipfile.ZipFile(apk) as archive:
+              libraries = [name for name in archive.namelist() if name.startswith('lib/') and name.endswith('.so')]
+          if not libraries:
+              raise SystemExit('APK contains no native libraries')
+          unexpected = [name for name in libraries if not name.startswith('lib/armeabi-v7a/')]
+          if unexpected:
+              raise SystemExit('Unexpected native ABIs: ' + ', '.join(unexpected))
+          if 'lib/armeabi-v7a/libtmessages.49.so' not in libraries:
+              raise SystemExit('The Telegram native library is missing from armeabi-v7a')
+          print(f'Validated {len(libraries)} native libraries: armeabi-v7a only')
+          PY
 
       - name: show ccache stats
         if: always()

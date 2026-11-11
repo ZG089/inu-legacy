@@ -1,0 +1,21 @@
+// Packages exactly one ABI, armeabi-v7a, in every Android module of the checkout it is applied to:
+//
+//   ./gradlew -I <repo>/legacy/armv7.init.gradle <tasks>
+//
+// The patchset already narrows stock's four ABIs to arm64-v8a inside its own build files.
+// Overriding that from here keeps those files byte-identical to upstream, so a sync never
+// conflicts, and a later change to upstream's filter cannot undo the override.
+//
+// Pluginless checkouts only: the plugin engine (libinu_native.so, lsplant) is built for arm64-v8a.
+allprojects { project ->
+    ['com.android.application', 'com.android.library'].each { id ->
+        project.plugins.withId(id) {
+            // finalizeDsl runs after the build script and before AGP reads the filter
+            project.extensions.getByName('androidComponents').finalizeDsl { dsl ->
+                def filters = dsl.defaultConfig.ndk.abiFilters
+                filters.clear()
+                filters.add('armeabi-v7a')
+            }
+        }
+    }
+}

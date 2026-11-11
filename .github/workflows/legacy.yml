@@ -1,0 +1,200 @@
+name: legacy
+
+# Fork-owned: upstream has no such file, so syncing teidesu/inugram never conflicts with it.
+# Builds the 32-bit (armeabi-v7a) pluginless APK and, on main, publishes a signed release.
+# Upstream's own build/release workflows stay disabled in this fork. See LEGACY.md.
+
+on:
+  push:
+    branches: [main]
+    # what the pluginless APK cannot contain; everything else (patches, series, scripts, new dirs) builds
+    paths-ignore:
+      - '**.md'
+      - changelogs/**
+      - sdk/**
+      - src/native/**
+      - src/test/**
+      - src/profile/**
+  # any branch can be built by hand; only main releases
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Publish a release when the build succeeds (main only)
+        type: boolean
+        default: true
+
+# main queues (a newer push replaces the pending run, never a running release); other refs cancel
+concurrency:
+  group: legacy-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    outputs:
+      apk: ${{ steps.info.outputs.apk }}
+      tag: ${{ steps.info.outputs.tag }}
+    env:
+      COMMIT_ID: ${{ github.sha }}
+      INU_BUILD: ${{ github.run_number }}
+      INU_BUILD_TYPE: release
+      # legacy/armv7.init.gradle pins gradle to armeabi-v7a; this is the Rust target build_wallet_engine.sh
+      # maps that ABI to
+      RUST_TARGET: armv7-linux-androideabi
+    steps:
+      - name: free disk space
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: set up ccache
+        uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2
+        with:
+          append-timestamp: true
+          key: ${{ runner.os }}-legacy-ndk-27.2-armeabi-v7a
+          restore-keys: ${{ runner.os }}-legacy-ndk-27.2-armeabi-v7a
+          max-size: 2G
+          save: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: set up worktree
+        run: pnpm run setup -- --ci --pluginless
+
+      # wallet-engine carries patches-native, so gradle rebuilds it with the toolchain its source pins
+      - name: install wallet engine rust target
+        working-directory: worktree-pluginless/TMessagesProj/jni/gram-wallet
+        run: rustup target add "$RUST_TARGET"
+
+      - name: compute build info
+        id: info
+        run: |
+          ver=$(sed -n 's/^APP_VERSION_NAME=//p' worktree-pluginless/gradle.properties)
+          [ -n "$ver" ] || { echo '::error::APP_VERSION_NAME not found in gradle.properties'; exit 1; }
+          {
+            echo "apk=inugram-legacy-$ver-${GITHUB_SHA::7}-$GITHUB_RUN_NUMBER-armeabi-v7a.apk"
+            echo "tag=v$ver-legacy.$GITHUB_RUN_NUMBER"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+        with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      # whatever else a synced upstream asks for, AGP downloads on demand
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: >-
+            platforms;android-36
+            build-tools;36.0.0
+            cmake;3.31.6
+            ndk;27.2.12479018
+
+      - name: tune gradle
+        run: |
+          {
+            echo 'org.gradle.caching=true'
+            echo 'org.gradle.parallel=true'
+            echo 'org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8 -XX:+UseParallelGC'
+          } >> ~/.gradle/gradle.properties
+
+      - name: build (unsigned, debug-keyed)
+        working-directory: worktree-pluginless
+        env:
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
+        run: ./gradlew --no-daemon -I "$GITHUB_WORKSPACE/legacy/armv7.init.gradle" :TMessagesProj_App:assembleRelease
+
+      - name: show ccache stats
+        if: always()
+        run: ccache -s
+
+      # a build that quietly packaged another ABI (or none) must not reach a release
+      - name: stage apk
+        run: |
+          built=$(find worktree-pluginless/TMessagesProj_App/build/outputs/apk/release -name '*.apk')
+          [ "$(echo "$built" | wc -l)" = 1 ] || { echo "::error::expected exactly one apk, found: ${built:-none}"; exit 1; }
+          abis=$({ unzip -Z1 "$built" 'lib/*' || true; } | cut -d/ -f2 | sed '/^$/d' | sort -u | paste -sd' ')
+          [ "$abis" = armeabi-v7a ] || { echo "::error::apk ships ABIs: ${abis:-none}, expected only armeabi-v7a"; exit 1; }
+          mkdir -p out
+          cp "$built" "out/${{ steps.info.outputs.apk }}"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: legacy-unsigned
+          path: out/*.apk
+          if-no-files-found: error
+          retention-days: 3
+
+  # holds the signing key, so it never checks out or runs anything from the repository
+  release:
+    needs: build
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.release)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      APK: ${{ needs.build.outputs.apk }}
+      TAG: ${{ needs.build.outputs.tag }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: legacy-unsigned
+          path: out
+
+      - name: sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          [ -n "$KEYSTORE_BASE64" ] || { echo '::error::KEYSTORE_BASE64 secret missing, see LEGACY.md'; exit 1; }
+          umask 077
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          apksigner=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -1)
+          "$apksigner" sign \
+            --ks "$RUNNER_TEMP/release.keystore" \
+            --ks-key-alias inugram \
+            --ks-pass env:KEYSTORE_PASSWORD \
+            --key-pass env:KEY_PASSWORD \
+            --in "out/$APK" \
+            --out "out/$APK.signed"
+          "$apksigner" verify --print-certs "out/$APK.signed"
+          mv "out/$APK.signed" "out/$APK"
+
+      - name: wipe keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if target=$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish 2>/dev/null); then
+            if [ "$target" != "$GITHUB_SHA" ]; then
+              echo "::error::release $TAG already exists for $target; re-run the run that created it instead"
+              exit 1
+            fi
+            gh release upload "$TAG" "out/$APK" --clobber
+          else
+            gh release create "$TAG" "out/$APK" --target "$GITHUB_SHA" --title "$TAG" --generate-notes
+          fi

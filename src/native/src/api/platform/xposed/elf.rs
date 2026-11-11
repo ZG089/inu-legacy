@@ -1,4 +1,4 @@
-use object::elf::{FileHeader64, SHT_DYNSYM, SHT_SYMTAB};
+use object::elf::{FileHeader32, FileHeader64, SHT_DYNSYM, SHT_SYMTAB};
 use object::read::elf::{FileHeader, SectionHeader, Sym, SymbolTable};
 use object::LittleEndian;
 use std::collections::HashMap;
@@ -7,17 +7,20 @@ use std::ffi::c_int;
 use std::ffi::{c_char, c_void, CStr};
 use std::fs;
 
-type Header = FileHeader64<LittleEndian>;
+type Endian = LittleEndian;
+
+const ELFCLASS32: u8 = 1;
+const ELFCLASS64: u8 = 2;
 
 #[repr(C)]
 struct Dynamic {
-  tag: i64,
-  value: u64,
+  tag: isize,
+  value: usize,
 }
 
-const DT_NULL: i64 = 0;
-const DT_STRTAB: i64 = 5;
-const DT_SONAME: i64 = 14;
+const DT_NULL: isize = 0;
+const DT_STRTAB: isize = 5;
+const DT_SONAME: isize = 14;
 
 unsafe fn read_soname(load_bias: usize, dynamic: &[Dynamic]) -> Option<&CStr> {
   let mut strings = None;
@@ -25,8 +28,8 @@ unsafe fn read_soname(load_bias: usize, dynamic: &[Dynamic]) -> Option<&CStr> {
   for entry in dynamic {
     match entry.tag {
       DT_NULL => break,
-      DT_STRTAB => strings = usize::try_from(entry.value).ok(),
-      DT_SONAME => soname = usize::try_from(entry.value).ok(),
+      DT_STRTAB => strings = Some(entry.value),
+      DT_SONAME => soname = Some(entry.value),
       _ => {}
     }
   }
@@ -74,25 +77,85 @@ pub fn is_lsposed_loaded() -> bool {
   false
 }
 
-fn read_tables(image: &[u8]) -> Vec<SymbolTable<'_, Header>> {
-  let Ok(header) = Header::parse(image) else {
-    return Vec::new();
+fn has_symbol_table_in<Elf>(image: &[u8]) -> bool
+where
+  Elf: FileHeader<Endian = Endian>,
+{
+  let Ok(header) = Elf::parse(image) else {
+    return false;
   };
-  let Ok(sections) = header.endian().and_then(|endian| header.sections(endian, image)) else {
-    return Vec::new();
+  let Ok(endian) = header.endian() else {
+    return false;
   };
-  sections
-    .enumerate()
-    .filter(|(_, section)| matches!(section.sh_type(LittleEndian), SHT_SYMTAB | SHT_DYNSYM))
-    .filter_map(|(index, section)| SymbolTable::parse(LittleEndian, image, &sections, index, section).ok())
-    .collect()
+  let Ok(sections) = header.sections(endian, image) else {
+    return false;
+  };
+  sections.enumerate().any(|(_, section)| matches!(section.sh_type(endian), SHT_DYNSYM | SHT_SYMTAB))
+}
+
+fn has_symbol_table(image: &[u8]) -> bool {
+  match image.get(4) {
+    Some(&ELFCLASS32) => has_symbol_table_in::<FileHeader32<Endian>>(image),
+    Some(&ELFCLASS64) => has_symbol_table_in::<FileHeader64<Endian>>(image),
+    _ => false,
+  }
+}
+
+fn read_debugdata_in<Elf>(image: &[u8]) -> Option<Vec<u8>>
+where
+  Elf: FileHeader<Endian = Endian>,
+{
+  let header = Elf::parse(image).ok()?;
+  let endian = header.endian().ok()?;
+  let sections = header.sections(endian, image).ok()?;
+  let (_, section) = sections.section_by_name(endian, b".gnu_debugdata")?;
+  decompress_xz(section.data(endian, image).ok()?)
 }
 
 fn read_debugdata(image: &[u8]) -> Option<Vec<u8>> {
-  let header = Header::parse(image).ok()?;
-  let sections = header.sections(header.endian().ok()?, image).ok()?;
-  let (_, section) = sections.section_by_name(LittleEndian, b".gnu_debugdata")?;
-  decompress_xz(section.data(LittleEndian, image).ok()?)
+  match image.get(4) {
+    Some(&ELFCLASS32) => read_debugdata_in::<FileHeader32<Endian>>(image),
+    Some(&ELFCLASS64) => read_debugdata_in::<FileHeader64<Endian>>(image),
+    _ => None,
+  }
+}
+
+fn find_symbols_in<Elf>(image: &[u8], matches: &impl Fn(&str) -> bool) -> Option<u64>
+where
+  Elf: FileHeader<Endian = Endian>,
+{
+  let header = Elf::parse(image).ok()?;
+  let endian = header.endian().ok()?;
+  let sections = header.sections(endian, image).ok()?;
+  for (index, section) in sections.enumerate() {
+    if !matches!(section.sh_type(endian), SHT_DYNSYM | SHT_SYMTAB) {
+      continue;
+    }
+    let Ok(table) = SymbolTable::parse(endian, image, &sections, index, section) else {
+      continue;
+    };
+    for symbol in table.symbols() {
+      let value: u64 = symbol.st_value(endian).into();
+      if value == 0 || symbol.is_undefined(endian) {
+        continue;
+      }
+      let Some(name) = symbol.name(endian, table.strings()).ok().and_then(|name| std::str::from_utf8(name).ok()) else {
+        continue;
+      };
+      if matches(name) {
+        return Some(value);
+      }
+    }
+  }
+  None
+}
+
+fn find_symbols(image: &[u8], matches: &impl Fn(&str) -> bool) -> Option<u64> {
+  match image.get(4) {
+    Some(&ELFCLASS32) => find_symbols_in::<FileHeader32<Endian>>(image, matches),
+    Some(&ELFCLASS64) => find_symbols_in::<FileHeader64<Endian>>(image, matches),
+    _ => None,
+  }
 }
 
 pub struct Symbols {
@@ -104,28 +167,11 @@ impl Symbols {
   pub fn parse(image: Vec<u8>) -> Option<Symbols> {
     let debug = read_debugdata(&image).unwrap_or_default();
     let symbols = Symbols { image, debug };
-    (!read_tables(&symbols.image).is_empty() || !read_tables(&symbols.debug).is_empty()).then_some(symbols)
+    (has_symbol_table(&symbols.image) || has_symbol_table(&symbols.debug)).then_some(symbols)
   }
 
   fn find(&self, matches: impl Fn(&str) -> bool) -> Option<u64> {
-    for image in [&self.image, &self.debug] {
-      for table in read_tables(image) {
-        for symbol in table.symbols() {
-          let value = symbol.st_value(LittleEndian);
-          if value == 0 || symbol.is_undefined(LittleEndian) {
-            continue;
-          }
-          let Some(name) = symbol.name(LittleEndian, table.strings()).ok().and_then(|n| std::str::from_utf8(n).ok())
-          else {
-            continue;
-          };
-          if matches(name) {
-            return Some(value);
-          }
-        }
-      }
-    }
-    None
+    find_symbols(&self.image, &matches).or_else(|| find_symbols(&self.debug, &matches))
   }
 
   pub fn exact(&self, name: &str) -> Option<u64> {

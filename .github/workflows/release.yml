@@ -26,7 +26,7 @@ jobs:
       - name: check changelog
         if: ${{ !inputs.skip-changelog-check }}
         env:
-          INU_BUILD: ${{ vars.INU_BUILD || '1' }}
+          INU_BUILD: ${{ github.repository == 'teidesu/inugram' && vars.INU_BUILD || github.run_number }}
         run: |
           if [ ! -f "changelogs/$INU_BUILD.md" ]; then
             echo "::error::changelogs/$INU_BUILD.md is missing"
@@ -119,7 +119,6 @@ jobs:
 
   github-release:
     needs: [build, sign]
-    if: github.repository == 'teidesu/inugram'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -162,14 +161,20 @@ jobs:
           fi
 
       - name: bump INU_BUILD variable
+        if: github.repository == 'teidesu/inugram'
         env:
           GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::INU_VARS_TOKEN is required to update the upstream INU_BUILD variable"
+            exit 1
+          fi
           next=$((${{ needs.build.outputs.build-num }} + 1))
           gh variable set INU_BUILD --body "$next"
 
   telegram:
+    if: github.repository == 'teidesu/inugram'
     needs: [build, github-release]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -202,6 +207,7 @@ jobs:
         run: pnpm tsx scripts/ci/upload.ts out
 
   publish-sdk:
+    if: github.repository == 'teidesu/inugram'
     needs: [build, github-release]
     runs-on: ubuntu-latest
     timeout-minutes: 15
