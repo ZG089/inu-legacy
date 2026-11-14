@@ -446,4 +446,3 @@ feature/cross-account-chats.patch
 bugfix/bottom-bar-ripple-origin.patch
 bugfix/twidget-security-bump.patch
 bugfix/share-alert-keyboard.patch
-misc/armv7a-build.patch

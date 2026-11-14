@@ -1,0 +1,68 @@
+name: sync-upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: configure git identity
+        run: |
+          git config user.name "ZG089"
+          git config user.email "159061718+ZG089@users.noreply.github.com"
+
+      - name: check upstream commits and releases
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          git remote add upstream https://github.com/teidesu/inugram.git || true
+          git fetch upstream main --tags
+
+          new_commits=$(git rev-list --count HEAD..upstream/main)
+          echo "Found $new_commits new commit(s) from upstream/main"
+          echo "new_commits=$new_commits" >> "$GITHUB_OUTPUT"
+
+          upstream_tag=$(gh release list -R teidesu/inugram --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || true)
+          echo "Latest upstream release tag: ${upstream_tag:-none}"
+
+          release_needed=false
+          if [ -n "$upstream_tag" ]; then
+            if ! gh release view "${upstream_tag}-legacy" 2>/dev/null; then
+              release_needed=true
+              echo "Release ${upstream_tag}-legacy does not exist yet in fork"
+            fi
+          fi
+          echo "release_needed=$release_needed" >> "$GITHUB_OUTPUT"
+          echo "upstream_tag=$upstream_tag" >> "$GITHUB_OUTPUT"
+
+      - name: merge upstream commits
+        if: steps.check.outputs.new_commits > 0
+        run: |
+          echo "Merging upstream/main..."
+          git merge upstream/main -m "Merge upstream/main"
+          git push origin main
+
+      - name: trigger release build
+        if: steps.check.outputs.release_needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="${{ steps.check.outputs.upstream_tag }}-legacy"
+          echo "Triggering release build for tag: $tag"
+          gh workflow run legacy.yml -f release=true -f release_tag="$tag"
