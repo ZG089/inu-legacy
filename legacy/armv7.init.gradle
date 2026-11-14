@@ -19,29 +19,33 @@ allprojects { project ->
     }
 
     project.plugins.withId('com.android.application') {
-        project.tasks.matching { it.name ==~ /buildInuNative.*/ }.configureEach { task ->
-            // Reconfigure cargo-ndk to target armeabi-v7a instead of hardcoded arm64-v8a
-            task.commandLine = task.commandLine.collect { it == 'arm64-v8a' ? 'armeabi-v7a' : it }
+        project.afterEvaluate {
+            project.tasks.matching { it.name ==~ /buildInuNative.*/ }.configureEach { task ->
+                // Reconfigure cargo-ndk to target armeabi-v7a instead of hardcoded arm64-v8a
+                task.commandLine = task.commandLine.collect { it == 'arm64-v8a' ? 'armeabi-v7a' : it }
 
-            def buildType = task.name.replace('buildInuNative', '').uncapitalize()
-            def stockJniTask = "copy${buildType.capitalize()}JniLibsProjectOnly"
-            def armv7StockLib = project.project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/armeabi-v7a/libtmessages.49.so")
-            def arm64StockLib = project.project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/arm64-v8a/libtmessages.49.so")
-            def sqliteLinkDir = project.file("${project.buildDir}/inuSqliteLink/$buildType")
+                def buildType = task.name.replace('buildInuNative', '').uncapitalize()
+                def stockJniTask = "copy${buildType.capitalize()}JniLibsProjectOnly"
+                def armv7StockLib = project.project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/armeabi-v7a/libtmessages.49.so")
+                def arm64StockLib = project.project(':TMessagesProj').file("build/intermediates/library_jni/$buildType/$stockJniTask/jni/arm64-v8a/libtmessages.49.so")
+                def sqliteLinkDir = project.file("${project.buildDir}/inuSqliteLink/$buildType")
 
-            task.inputs.file(armv7StockLib)
-            task.doFirst {
-                // Ensure arm64 directory & symlink exist so upstream inputs/actions resolve cleanly
-                if (!arm64StockLib.exists() && armv7StockLib.exists()) {
-                    arm64StockLib.parentFile.mkdirs()
-                    try {
-                        java.nio.file.Files.createSymbolicLink(arm64StockLib.toPath(), armv7StockLib.toPath())
-                    } catch (Exception ignored) {
-                        java.nio.file.Files.copy(armv7StockLib.toPath(), arm64StockLib.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                task.inputs.file(armv7StockLib)
+                task.doFirst {
+                    task.commandLine = task.commandLine.collect { it == 'arm64-v8a' ? 'armeabi-v7a' : it }
+
+                    // Ensure arm64 directory & symlink exist so upstream inputs/actions resolve cleanly
+                    if (!arm64StockLib.exists() && armv7StockLib.exists()) {
+                        arm64StockLib.parentFile.mkdirs()
+                        try {
+                            java.nio.file.Files.createSymbolicLink(arm64StockLib.toPath(), armv7StockLib.toPath())
+                        } catch (Exception ignored) {
+                            java.nio.file.Files.copy(armv7StockLib.toPath(), arm64StockLib.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                        }
                     }
+                    sqliteLinkDir.mkdirs()
+                    new File(sqliteLinkDir, 'libsqlite3.so').text = "INPUT(${armv7StockLib.absolutePath})\n"
                 }
-                sqliteLinkDir.mkdirs()
-                new File(sqliteLinkDir, 'libsqlite3.so').text = "INPUT(${armv7StockLib.absolutePath})\n"
             }
         }
     }
