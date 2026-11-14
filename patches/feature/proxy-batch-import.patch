@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 18:01:59 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: batch import proxies from clipboard
+Subject: batch import proxies from clipboard
 
 ---
  .../java/org/telegram/ui/ProxyListActivity.java    | 14 +++++++++++---

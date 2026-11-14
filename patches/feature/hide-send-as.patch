@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 13 May 2026 16:01:53 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hide "send as" behind long-tapping the stickers button
+Subject: hide "send as" behind long-tapping the stickers button
 
 ---
  .../telegram/ui/Components/ChatActivityEnterView.java | 11 ++++++++++-
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          messageEditTextContainer.addView(emojiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 2, 0, 0, 0));
          setEmojiButtonImage(false, false);
  
-@@ -11413,7 +11421,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11418,7 +11426,8 @@ public class ChatActivityEnterView extends FrameLayout implements
              && !isEditingMessage() && !isRecordingAudioVideo()
              && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE)
              && (isLiveComment || (!ChatObject.isChannelAndNotMegaGroup(chat) || ChatObject.canSendAsPeers(chat)) && !ChatObject.isMonoForum(chat))

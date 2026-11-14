@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 21:18:03 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: system-level transient audio focus when playing videos
+Subject: system-level transient audio focus when playing videos
 
 ---
  .../main/java/org/telegram/ui/Components/VideoPlayer.java | 8 ++++++++

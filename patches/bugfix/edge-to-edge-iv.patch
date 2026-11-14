@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 00:50:48 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: proper edge-to-edge for instant view
+Subject: proper edge-to-edge for instant view
 
 ---
  .../telegram/ui/ActionBar/ActionBarLayout.java | 18 ++++++++++--------

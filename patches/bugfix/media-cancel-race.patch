@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 11 Jun 2026 16:32:07 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hopefully fix cancelling sending media
+Subject: hopefully fix cancelling sending media
 
 ---
  .../messenger/SendMessagesHelper.java         | 20 ++++++++++++++-----
@@ -90,7 +90,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -35100,9 +35100,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35176,9 +35176,7 @@ public class ChatActivity extends BaseFragment implements
                  if (selectedObject.isEditing() || selectedObject.isSending() && selectedObjectGroup == null) {
                      getSendMessagesHelper().cancelSendingMessage(selectedObject);
                  } else if (selectedObject.isSending() && selectedObjectGroup != null) {

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 8 Nov 2026 03:30:16 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix connecting to ipv6 proxies
+Subject: fix connecting to ipv6 proxies
 
 ---
  TMessagesProj/jni/tgnet/ConnectionSocket.cpp  | 31 ++++++++++---------

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 3 Aug 2026 15:41:47 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Always use the modern rewind UI in the video player.
+Subject: Always use the modern rewind UI in the video player.
 
 ---
  .../main/java/org/telegram/ui/PhotoViewer.java   | 16 ++--------------

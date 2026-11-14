@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 10 Apr 2026 02:49:39 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show voice/video button hint only once
+Subject: show voice/video button hint only once
 
 ---
  .../src/main/java/org/telegram/messenger/SharedConfig.java      | 1 +
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13533,6 +13533,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13548,6 +13548,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showVoiceHint(boolean hide, boolean video) {
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          if (getParentActivity() == null || fragmentView == null || hide && voiceHintTextView == null || chatMode != 0 || chatActivityEnterView == null  || chatActivityEnterView.getAudioVideoButtonContainer() == null || chatActivityEnterView.getAudioVideoButtonContainer().getVisibility() != View.VISIBLE || isInPreviewMode()) {
              return;
          }
-@@ -13556,6 +13557,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13571,6 +13572,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          voiceHintTextView.showForView(chatActivityEnterView.getAudioVideoButtonContainer(), true);

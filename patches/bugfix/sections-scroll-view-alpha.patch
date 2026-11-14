@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 05:04:53 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: respect container alpha when drawing section backgrounds
+Subject: respect container alpha when drawing section backgrounds
 
 ---
  .../org/telegram/ui/Components/SectionsScrollView.java    | 8 ++++++--

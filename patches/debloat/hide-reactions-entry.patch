@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Apr 2026 04:44:17 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hide animation when sending a reaction
+Subject: hide animation when sending a reaction
 
 ---
  .../ui/Components/Reactions/ReactionsLayoutInBubble.java         | 1 +
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/Re
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
-@@ -1645,6 +1645,7 @@ public class ReactionsLayoutInBubble {
+@@ -1647,6 +1647,7 @@ public class ReactionsLayoutInBubble {
      }
  
      public void animateReaction(VisibleReaction reaction) {

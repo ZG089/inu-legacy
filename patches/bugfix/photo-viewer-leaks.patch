@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 2 Jul 2026 13:38:44 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: various memory leaks fixes in PhotoViewer
+Subject: various memory leaks fixes in PhotoViewer
 
 ---
  .../BlurredBackgroundDrawableViewFactory.java |  6 ++++++

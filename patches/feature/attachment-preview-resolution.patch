@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Sat, 3 Oct 2026 18:17:25 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Open attachment photos at up to 1920px
+Subject: Open attachment photos at up to 1920px
 
 Decode attachment photos at up to 1920px when opening them, which
 avoids decoding and uploading full-size camera photos and their

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 12 Aug 2026 21:53:56 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix crash updating the community avatar in the forward picker
+Subject: Fix crash updating the community avatar in the forward picker
 
 ---
  .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -10751,7 +10751,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10753,7 +10753,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              if (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE && (mask & MessagesController.UPDATE_MASK_READ_DIALOG_MESSAGE) != 0) {
                  filterTabsView.checkTabsCounter();
              }

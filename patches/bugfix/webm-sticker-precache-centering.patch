@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 00:54:37 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix non-square webm stickers rendering off-center in the emoji panel
+Subject: fix non-square webm stickers rendering off-center in the emoji panel
 
 ---
  .../messenger/utils/BitmapsCache.java         |  2 +-

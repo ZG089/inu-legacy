@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Sat, 3 Oct 2026 02:28:07 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Optimize attachment photo and video opening
+Subject: Optimize attachment photo and video opening
 
 Prepare photo textures before their first draw, including memory-cache
 hits. Animate the thumbnail without a hardware layer or opacity fade for

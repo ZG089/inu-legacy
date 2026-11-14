@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 29 Apr 2026 01:08:23 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: chat editor improvements: - make it available for everyone (as a read-only view) - split media restrictions for stickers/gifs/games/inline
+Subject: chat editor improvements: - make it available for everyone (as a read-only view) - split media restrictions for stickers/gifs/games/inline
 
 ---
  .../org/telegram/ui/ChatEditActivity.java     | 40 +++++++--
@@ -554,7 +554,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -12366,7 +12366,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12486,7 +12486,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          editItemVisible = true;
                      }
                  } else {

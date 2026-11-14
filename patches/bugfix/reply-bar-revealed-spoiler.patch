@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 12 Aug 2026 22:26:48 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Don't re-spoiler revealed spoilers in the reply bar.
+Subject: Don't re-spoiler revealed spoilers in the reply bar.
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15954,7 +15954,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -15978,7 +15978,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  if (replyObjectText != null) {
                      if (replyObjectText instanceof Spannable && sourceText != null) {

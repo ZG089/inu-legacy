@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 16:12:49 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: don't wait for keyboard to hide before screen transitions
+Subject: don't wait for keyboard to hide before screen transitions
 
 ---
  .../ui/ActionBar/ActionBarLayout.java         | 83 ++-----------------

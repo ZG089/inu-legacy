@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 2 Sep 2026 05:51:44 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hook for fork rows in the send preview sheet
+Subject: hook for fork rows in the send preview sheet
 
 ---
  .../java/org/telegram/ui/Components/ChatActivityEnterView.java  | 2 +-

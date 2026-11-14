@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 21:58:13 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix frozen account bar overlapping message search
+Subject: fix frozen account bar overlapping message search
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java       | 8 ++++----
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -29285,9 +29285,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -29318,9 +29318,6 @@ public class ChatActivity extends BaseFragment implements
              bottomChannelButtonsLayout.setVisibility(View.INVISIBLE);
              chatActivityEnterView.setFieldFocused(false);
              chatActivityEnterView.setVisibility(View.INVISIBLE);
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          } else if (searchItem != null && searchItemVisible) {
              createSearchContainer();
              if (searchContainer == null) {
-@@ -29379,7 +29376,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -29412,7 +29409,10 @@ public class ChatActivity extends BaseFragment implements
                      muteItemGap.setVisibility(View.VISIBLE);
                  }
              }

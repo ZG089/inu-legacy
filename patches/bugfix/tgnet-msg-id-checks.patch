@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 24 Oct 2026 20:35:39 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: check incoming msg_ids like tdlib so requests don't hang after reconnect
+Subject: check incoming msg_ids like tdlib so requests don't hang after reconnect
 
 ---
  TMessagesProj/jni/tgnet/ConnectionSession.cpp | 49 +++++++++--

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 15 Oct 2026 22:29:51 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hopefully fix crop, captions and pip breaking randomly
+Subject: hopefully fix crop, captions and pip breaking randomly
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 4 ++++

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 3 Aug 2026 14:59:06 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Don't request the admin list for communities where we're not an admin
+Subject: Don't request the admin list for communities where we're not an admin
 
 ---
  .../main/java/org/telegram/messenger/MessagesController.java | 5 +++++

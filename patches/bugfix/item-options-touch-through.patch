@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 14 Oct 2026 02:43:24 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: block touches behind context menu until its window takes input
+Subject: block touches behind context menu until its window takes input
 
 ---
  .../main/java/org/telegram/ui/Components/ItemOptions.java   | 6 ++++++

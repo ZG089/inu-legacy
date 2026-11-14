@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 29 May 2026 01:04:39 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix formatting over overlapping different entities spilling the last one
+Subject: fix formatting over overlapping different entities spilling the last one
 
 ---
  .../ui/Components/EditTextCaption.java        | 71 ++++++++++++++++++-

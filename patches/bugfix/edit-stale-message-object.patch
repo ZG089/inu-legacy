@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 10 Oct 2026 03:34:44 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: keep edited message object in sync with replacements
+Subject: keep edited message object in sync with replacements
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java   | 11 +++++++++++
@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -28024,6 +28024,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -28049,6 +28049,17 @@ public class ChatActivity extends BaseFragment implements
                      desu.inugram.helpers.chat.ReactionDebugHelper.onMessageObjectReplaced(old, messageObject);
                      messageObject.copyStableParams(old);
                      messages.set(index, messageObject);

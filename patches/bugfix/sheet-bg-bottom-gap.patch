@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Sat, 30 May 2026 18:27:35 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix bottom transparent gap in some bottom sheets
+Subject: fix bottom transparent gap in some bottom sheets
 
 ---
  .../java/org/telegram/ui/Components/FiltersListBottomSheet.java  | 1 -

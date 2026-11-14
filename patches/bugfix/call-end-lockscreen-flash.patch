@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 01:16:50 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Dont flash the dialogs list over the lockscreen after ending a call
+Subject: Dont flash the dialogs list over the lockscreen after ending a call
 
 ---
  .../telegram/ui/Components/voip/VoIPWindowView.java   | 11 +++++++++++
@@ -57,7 +57,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -7271,6 +7271,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7285,6 +7285,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      @Override
      protected void onResume() {
          super.onResume();

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sat, 17 Oct 2026 22:26:33 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix sqlite picking slow plans on some storage queries
+Subject: fix sqlite picking slow plans on some storage queries
 
 ---
  .../messenger/MediaDataController.java        |  2 +-
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                                  chats.remove(a);
                                  a--;
                                  pushDialogs.remove(did);
-@@ -9098,9 +9098,9 @@ public class MessagesStorage extends BaseController {
+@@ -9184,9 +9184,9 @@ public class MessagesStorage extends BaseController {
              try {
                  int result;
                  if (topicId != 0) {
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                  }
                  if (cursor.next() && cursor.intValue(1) == expectedCount) {
                      result = cursor.intValue(0);
-@@ -15014,25 +15014,25 @@ public class MessagesStorage extends BaseController {
+@@ -15101,25 +15101,25 @@ public class MessagesStorage extends BaseController {
                  for (int i = 0; i < 5; i++) {
                      if (i == 0) {
                          if (dialogId != 0) {
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                      }
                      TLRPC.TL_messageEmpty emptyMessage = new TLRPC.TL_messageEmpty();
                      NativeByteBuffer data = new NativeByteBuffer(emptyMessage.getObjectSize());
-@@ -15040,9 +15040,8 @@ public class MessagesStorage extends BaseController {
+@@ -15127,9 +15127,8 @@ public class MessagesStorage extends BaseController {
  
                      state.requery();
                      state.bindByteBuffer(1, data);

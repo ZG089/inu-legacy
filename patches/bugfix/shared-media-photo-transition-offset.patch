@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 19:18:19 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix shared media photo transition offset by the grid spacing
+Subject: fix shared media photo transition offset by the grid spacing
 
 ---
  .../main/java/org/telegram/ui/Components/SharedMediaLayout.java | 2 --
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -1357,8 +1357,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
+@@ -1359,8 +1359,6 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                      if (message.getId() == messageObject.getId()) {
                          imageReceiver = cell.imageReceiver;
                          cell.getLocationInWindow(coords);

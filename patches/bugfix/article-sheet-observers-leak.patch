@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 23 Oct 2026 14:04:40 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix instant view sheets never unregistering observers
+Subject: fix instant view sheets never unregistering observers
 
 ---
  .../src/main/java/org/telegram/ui/ArticleViewer.java     | 9 +++++++++

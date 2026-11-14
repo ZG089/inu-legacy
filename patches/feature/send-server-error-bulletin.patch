@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 5 Nov 2026 22:32:41 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show a bulletin when the server keeps failing to deliver a message
+Subject: show a bulletin when the server keeps failing to deliver a message
 
 ---
  TMessagesProj/jni/TgNetWrapper.cpp                    | 11 +++++++++++

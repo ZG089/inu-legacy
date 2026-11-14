@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 9 Oct 2026 01:38:18 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: keep tgnet awake for pending requests in background
+Subject: keep tgnet awake for pending requests in background
 
 ---
  TMessagesProj/jni/tgnet/ConnectionsManager.cpp | 10 ++++++----

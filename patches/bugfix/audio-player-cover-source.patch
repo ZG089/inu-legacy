@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 21:24:55 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show embedded audio cover in player playlist, matching the player
+Subject: show embedded audio cover in player playlist, matching the player
 
 ---
  .../messenger/audioinfo/AudioInfo.java         |  3 +--
@@ -74,7 +74,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
-@@ -2416,8 +2416,8 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -2417,8 +2417,8 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
              TLRPC.Document document = messageObject.getDocument();
              currentFile = FileLoader.getAttachFileName(document);
              currentAudioFinishedLoading = false;

@@ -25,7 +25,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - join/creation date in group & channel profiles
 - show linked channel in discussion group profile similar to personal channel
 - hide own phone number from ui
-- fonts: manage a list of fonts used in the media editor text tool; device system fonts can be toggled on/off. install fonts from .ttf/.otf/.ttc files right from the chats.
+- fonts: manage a list of fonts used in the media editor text tool; device system fonts can be toggled on/off. install fonts from .ttf/.otf/.ttc files right from the chats (whole family at once when sent as an album).
 - extra meme-style outlined text style in the media editor text tool
 - 🐶 app-font *stack*: pick a user-provided TTF/OTF/TTC family as the whole-app font, optionally with fallbacks (e.g. for other scripts)
 - 🐶 separate monospace font: pick any roster font for code blocks (inline + pre), previewed live alongside the stack
@@ -60,6 +60,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - bottom tabs: material design 3 style with a pill indicator behind the selected icon
 - double-tap account tab to switch to next account
 - long-tap "chats" tab to pick folder from menu
+- cross-account chats (experimental, off by default): add a chat to another account's chat list, then open it and send messages from there without switching accounts
 - folder display modes: titles / titles+icons / icons-only
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
 - hide "all chats" folder tab
@@ -128,7 +129,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
   - Delete my messages
   - Statistics / Administrators / Permissions / Invite links (admin shortcuts)
 - 🐶 disable custom wallpaper and theme per chat
-- per-forum client-side topics layout override (tabs/list) from the profile menu
+- per-forum client-side topics layout override (tabs/list/sidebar) from the profile menu
 - read-only chat "admin" page for non-admins
 - split media restriction toggles for stickers / gifs / games / inline
 - show id in profile, show user json
@@ -214,6 +215,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - import the Money wallet from raw ed25519 private key (+ support for 12 words rotation) - *engine patch from [gettele/money](https://github.com/gettele/money)*
   - replace an imported key with 12 new words via an on-chain key rotation, offered once right after import - *inspired by [tele](https://github.com/nitreojs/tele)*
+- "View in Explorer" for Money wallet addresses: in the My Money menu and on the profile wallet card
 
 ## behavior
 
@@ -278,6 +280,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 
 ## 🐶 bugfixes (vs stock)
 
+- bot widgets: engine and renderer updated ahead of stock to close memory-safety holes reachable from widget scripts and hostile markup
 - no extra bottom padding under stickers
 - 12/24-hour time follows the system locale again when the system clock format is automatic (stock switched to the Telegram language's format after any configuration change)
 - android 16 "expanded" dark theme no longer force-inverts the app
@@ -337,7 +340,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - context menus no longer let the list behind them scroll when a drag starts just before the menu window takes input
 - dialogs shown over a story (or another attached sheet) no longer lose their dismiss callback (stock bug: the fragment handed the dialog to the sheet and dropped the listener)
 - custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
-- reaction counter shift during long-tap menu
 - reactions with equal counts swapping places after sending one or reopening the chat; ties are now ordered by the reaction list position, like other clients
 - media caption hiding and then revealing top-down when reactions first appear on the message
 - reactions silently disappearing right after being sent (stale server read race); for a few seconds after a send, server answers that lose or undercount your own reaction are corrected from the local state
@@ -347,6 +349,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - reaction effect and haptic skipped whenever the in-chat counter was already 0, and never played for reactions reached via the jump button (the jump marked them read before the message was even shown)
 - album reactions counted once per bottom-row photo; a stale reactions update could also mark a just-seen reaction unread again
 - in-memory unread reactions count overwritten by a stale database copy after deleting messages
+- unread reactions counter stuck in groups after reading a reaction on another device (the read only arrives as a message edit, which stock ignores outside private chats); the count is now re-requested from the server
 - channel reactions: toggling "Enable Reactions" was silently discarded on back (unsaved-changes check only compared the emoji selection, never the enabled state), and re-enabling always saved the prefilled list as an explicit set instead of "All"
 - rounded section backgrounds ignored the alpha of the fading container they lived in, so they stayed fully opaque during the animation and only popped away on the next unrelated redraw (e.g. toggling "Enable Reactions" in channel reactions)
 - sticky date pill jump and color shift when replacing an inline date separator
@@ -380,6 +383,8 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
 - stale unread badges on global-search top peers
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
+- unread mentions counter stuck after reading a mention on another device while someone reacted to it (the message edit stored the mention as read without touching the counter, so the read update that followed was ignored)
+- chat bottom bar button (mute/unmute, join, etc.) ripple always starting slightly left of the center instead of at the touch point
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
 - folder tab unread counters slowly drifting to zero (badge disappearing while the list still shows unread chats) as chats got read
 - photo/video gallery performance improvements
@@ -428,6 +433,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
+- chat wallpaper stuck as a smeared/see-through dark-theme pattern after the system theme flipped while the app was in the background or killed (a pending wallpaper load for the old theme committed after the new theme's load, which then kept it)
 - expanded story reactions no longer remain above the app after dismissing the reply keyboard with the system back gesture
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)

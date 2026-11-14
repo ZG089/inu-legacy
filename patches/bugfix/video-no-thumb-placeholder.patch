@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 18:00:08 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: black placeholder blinking on videos without thumbs
+Subject: black placeholder blinking on videos without thumbs
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 3 +++

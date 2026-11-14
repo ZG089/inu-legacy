@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 16 Oct 2026 02:10:40 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix pinning chats found in search
+Subject: fix pinning chats found in search
 
 ---
  .../messenger/MessagesController.java         | 85 ++++++++++++++++++-
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
      private void fetchFolderInLoadedPinnedDialogs(TLRPC.TL_messages_peerDialogs res) {
          for (int a = 0, N = res.dialogs.size(); a < N; a++) {
              TLRPC.Dialog dialog = res.dialogs.get(a);
-@@ -17782,6 +17862,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17872,6 +17952,9 @@ public class MessagesController extends BaseController implements NotificationCe
              }
          }
          getMessagesStorage().setDialogPinned(dialogId, dialog.pinnedNum);
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
          return true;
      }
  
-@@ -23054,7 +23137,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -23152,7 +23235,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          }
                      }
                      if (maxDate > Integer.MIN_VALUE) {
@@ -131,7 +131,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -18244,6 +18244,33 @@ public class MessagesStorage extends BaseController {
+@@ -18346,6 +18346,33 @@ public class MessagesStorage extends BaseController {
          });
      }
  
@@ -192,7 +192,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9846,6 +9846,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9848,6 +9848,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (filter != null) {
              if (pin) {
                  filter.pinnedDialogs.put(selectedDialog, minPinnedNum);
@@ -202,7 +202,7 @@ index 0000000..0000000 100644
              } else {
                  filter.pinnedDialogs.delete(selectedDialog);
              }
-@@ -10180,6 +10183,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10182,6 +10185,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
  
      private void showOrUpdateActionMode(long dialogId, View cell) {
          addOrRemoveSelectedDialog(dialogId, cell);

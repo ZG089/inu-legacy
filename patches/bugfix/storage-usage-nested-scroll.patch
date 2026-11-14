@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 23 Jul 2026 08:52:01 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hopefully fix storage usage nested scroll
+Subject: hopefully fix storage usage nested scroll
 
 ---
  .../main/java/org/telegram/ui/CachedMediaLayout.java  |  2 +-

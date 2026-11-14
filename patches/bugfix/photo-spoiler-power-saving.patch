@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Apr 2026 04:51:56 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: disabling animated spoiler in power settings doesn't apply to photos
+Subject: disabling animated spoiler in power settings doesn't apply to photos
 
 ---
  .../org/telegram/ui/Cells/ChatMessageCell.java   |  8 ++++++++
@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -13467,6 +13467,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13499,6 +13499,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
      public void drawBlurredPhotoParticles(Canvas canvas) {
          if (mediaSpoilerEffect2 == null) {

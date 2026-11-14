@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 28 May 2026 22:18:07 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: md3-style sections redesign
+Subject: md3-style sections redesign
 
 ---
  .../telegram/messenger/RichMessageLayout.java |  2 +-
@@ -40,7 +40,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -10244,7 +10244,7 @@ public class RichMessageLayout {
+@@ -10258,7 +10258,7 @@ public class RichMessageLayout {
              @Override
              public PreviewView createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
                  final PreviewView cell = new PreviewView(context, currentAccount, resourcesProvider);
@@ -532,7 +532,7 @@ index 0000000..0000000 100644
 +        if (recyclerView != parent || radius <= 0.0f || desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) return;
          updateBackgroundColor();
          ensureBitmaps();
-         collectingCornerVertices = drawBackground && drawingMode == RecyclerListView.SectionsDrawingMode.DRAW_VERTICES;
+         final int inu_restoreCount = canvas.save();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
@@ -1085,7 +1085,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java
-@@ -1221,6 +1221,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
+@@ -1223,6 +1223,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
                  };
                  headerCell.setWillNotDraw(false);
                  headerCell.setPadding(headerCell.getPaddingLeft(), dp(16), headerCell.getRight(), dp(16));

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 6 Oct 2026 20:07:22 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: temporary patch with extra debug logs for stuck webm stickers
+Subject: temporary patch with extra debug logs for stuck webm stickers
 
 ---
  .../messenger/AnimatedFileDrawableStream.java  |  6 +++++-
@@ -109,7 +109,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -9083,6 +9083,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -9109,6 +9109,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              if (!loopStickers()) {
                                  photoImage.animatedFileDrawableRepeatMaxCount = 1;
                              }

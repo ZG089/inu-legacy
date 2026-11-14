@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 22:28:12 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix emoji-only table cells stretching row height to column width
+Subject: fix emoji-only table cells stretching row height to column width
 
 ---
  .../main/java/org/telegram/ui/Components/TableLayout.java  | 7 +++++--

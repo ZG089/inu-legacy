@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Damir Modyarov <damir@otomir23.me>
 Date: Tue, 28 Apr 2026 15:27:42 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: add custom resource loader for icon replacement
+Subject: add custom resource loader for icon replacement
 
 ---
  .../telegram/ui/ActionBar/BackDrawable.java    |  6 ++++++

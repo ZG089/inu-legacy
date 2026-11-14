@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 26 Jul 2026 22:23:19 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fetch messages when cached history is unusable
+Subject: Fetch messages when cached history is unusable
 
 ---
  .../src/main/java/org/telegram/messenger/MessagesStorage.java   | 2 +-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -10194,7 +10194,7 @@ public class MessagesStorage extends BaseController {
+@@ -10280,7 +10280,7 @@ public class MessagesStorage extends BaseController {
                  runnable.run();
              };
          } else {*/

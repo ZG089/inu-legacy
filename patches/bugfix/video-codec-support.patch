@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Mon, 26 Oct 2026 01:08:17 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Enable video editing when Android provides a decoder
+Subject: Enable video editing when Android provides a decoder
 
 ---
  .../org/telegram/messenger/SendMessagesHelper.java    |  6 ++++++
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
  import android.media.MediaExtractor;
  import android.media.MediaFormat;
  import android.media.MediaMuxer;
-@@ -1714,6 +1715,10 @@ public class MediaCodecVideoConvertor {
+@@ -1726,6 +1727,10 @@ public class MediaCodecVideoConvertor {
              try {
                  String mime = types.remove(0);
                  format.setString(MediaFormat.KEY_MIME, mime);

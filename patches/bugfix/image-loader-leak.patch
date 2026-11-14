@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Mon, 1 Jun 2026 18:25:43 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hopefully fix memory leak in ImageLoader
+Subject: hopefully fix memory leak in ImageLoader
 
 ---
  .../org/telegram/messenger/ImageLoader.java   | 66 +++++++++++--------

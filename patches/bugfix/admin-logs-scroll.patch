@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 21 May 2026 21:41:24 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix scroll positioning when admin log entries load
+Subject: fix scroll positioning when admin log entries load
 
 ---
  .../org/telegram/ui/ChannelAdminLogActivity.java | 16 ++++++++--------

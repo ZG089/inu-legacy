@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Fri, 17 Jul 2026 01:49:07 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: correctly handle TL_fileLocationToBeDeprecated dc_id
+Subject: correctly handle TL_fileLocationToBeDeprecated dc_id
 
 ---
  .../src/main/java/org/telegram/messenger/ImageLocation.java    | 3 +++

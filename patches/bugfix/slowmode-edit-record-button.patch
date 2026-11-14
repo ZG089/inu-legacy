@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 22 Oct 2026 12:11:11 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix voice button staying invisible after editing a message during slow mode
+Subject: fix voice button staying invisible after editing a message during slow mode
 
 ---
  .../org/telegram/ui/Components/ChatActivityEnterView.java   | 6 +++---
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -10333,9 +10333,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -10338,9 +10338,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                      attachButton.setScaleX(0.5f);
                      attachButton.setScaleY(0.5f);
                  }

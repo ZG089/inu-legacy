@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 26 Aug 2026 01:41:27 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: destroy story input views on release
+Subject: destroy story input views on release
 
 ---
  .../main/java/org/telegram/ui/Stories/PeerStoriesView.java    | 4 ++++

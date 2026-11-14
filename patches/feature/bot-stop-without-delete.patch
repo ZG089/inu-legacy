@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 24 Aug 2026 01:29:47 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: stop the bot instead of deleting the chat from the profile Stop button.
+Subject: stop the bot instead of deleting the chat from the profile Stop button.
 
 ---
  .../src/main/java/org/telegram/ui/ProfileActivity.java        | 4 ++++
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -6391,6 +6391,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6401,6 +6401,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          } else {

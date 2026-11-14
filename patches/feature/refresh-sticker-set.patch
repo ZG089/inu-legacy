@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 28 Jul 2026 19:28:39 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: refresh sticker/emoji sets
+Subject: refresh sticker/emoji sets
 
 ---
  .../org/telegram/ui/Components/EmojiPacksAlert.java   | 11 +++++++++++

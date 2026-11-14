@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 13 Aug 2026 02:20:47 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix cancelled video downloads restarting forever after streaming
+Subject: Fix cancelled video downloads restarting forever after streaming
 
 ---
  .../main/java/org/telegram/messenger/FileLoadOperation.java    | 3 ---

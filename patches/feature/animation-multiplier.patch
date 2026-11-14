@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 22 Apr 2026 10:42:47 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: customizable animation speed multiplier for most animations
+Subject: customizable animation speed multiplier for most animations
 
 ---
  .../main/java/org/telegram/ui/ActionBar/ActionBarLayout.java   | 2 +-
@@ -43,7 +43,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -8830,7 +8830,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8848,7 +8848,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          if (!ignoreScrollOnFullExpand && view != null /*&& hasActions*/) {
                              justFullyExpanded = true;
                              final int actionBarHeight = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);

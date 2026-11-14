@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 18:02:28 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: play saved music top to bottom
+Subject: play saved music top to bottom
 
 ---
  .../src/main/java/org/telegram/messenger/MediaController.java   | 2 +-
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
-@@ -1630,7 +1630,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -1631,7 +1631,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                      idx++;
                  }
                  if (idx >= 0) {

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 14 Oct 2026 01:23:37 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix folder showing all chats after forward picker switched folders
+Subject: fix folder showing all chats after forward picker switched folders
 
 ---
  .../java/org/telegram/ui/DialogsActivity.java   | 17 +++++++++++++++++
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -7240,6 +7240,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7242,6 +7242,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
          showFiltersHint();
          if (viewPages != null) {

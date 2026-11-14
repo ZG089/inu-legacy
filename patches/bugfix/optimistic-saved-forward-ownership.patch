@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 12 Oct 2026 02:03:34 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix Saved Messages forward ownership before server confirmation (fixes album layout)
+Subject: fix Saved Messages forward ownership before server confirmation (fixes album layout)
 
 ---
  .../src/main/java/org/telegram/messenger/SendMessagesHelper.java | 1 +

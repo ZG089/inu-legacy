@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 23 Jul 2026 07:02:27 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix chat permanently not following keyboard during predictive back
+Subject: Fix chat permanently not following keyboard during predictive back
 
 ---
  .../inset/WindowAnimatedInsetsProvider.java   | 76 ++++++++++++++++---

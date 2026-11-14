@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Tue, 28 Apr 2026 23:11:31 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: "jump to the beginning" button in calendar popup
+Subject: "jump to the beginning" button in calendar popup
 
 ---
  .../java/org/telegram/ui/Components/AlertsCreator.java   | 9 +++++++++

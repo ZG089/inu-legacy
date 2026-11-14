@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 9 Nov 2026 00:08:20 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix profile rows hidden while media undock
+Subject: fix profile rows hidden while media undock
 
 ---
  .../src/main/java/org/telegram/ui/ProfileActivity.java       | 5 ++++-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -8230,6 +8230,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8244,6 +8244,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          headerFadeView.setAlpha(0);
          // follows the media every frame: it stays at the top of the screen
          contentView.getViewTreeObserver().addOnPreDrawListener(() -> {
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
              updateHeaderBlurHeight();
              updateHeaderBlurViews();
              return true;
-@@ -8317,7 +8318,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -8330,7 +8331,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private void checkPagesVisibleOverscan() {
          if (sharedMediaLayout != null) {
              // until the header has grown back over them: the header draws its color only above (1 - progress) of its height

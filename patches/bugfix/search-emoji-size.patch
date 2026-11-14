@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: flexagoon <code@fxgn.dev>
 Date: Fri, 15 May 2026 21:26:00 +0200
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix emoji-only message size in search results
+Subject: Fix emoji-only message size in search results
 
 ---
  .../java/org/telegram/messenger/HashtagSearchController.java  | 2 +-

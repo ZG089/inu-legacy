@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Sun, 25 Oct 2026 22:43:30 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: reduce action bar shadow
+Subject: reduce action bar shadow
 
 ---
  .../src/main/java/org/telegram/ui/ActionBar/ActionBar.java      | 2 +-
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2777,7 +2777,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2779,7 +2779,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
  
          setBackgroundColor(ColorUtils.blendARGB(lowerColor, topColor, factor));

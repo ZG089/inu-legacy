@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 22 Oct 2026 10:12:08 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix editing rich messages with hashtags and mentions
+Subject: fix editing rich messages with hashtags and mentions
 
 ---
  .../messenger/SendMessagesHelper.java         | 45 +++++++++++++++++++

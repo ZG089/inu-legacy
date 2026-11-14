@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Wed, 29 Apr 2026 16:53:25 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: show folders as a menu when long-tapping the "Chats" tab in the main page
+Subject: show folders as a menu when long-tapping the "Chats" tab in the main page
 
 ---
  .../main/java/org/telegram/ui/DialogsActivity.java  |  9 +++++++++
@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6801,6 +6801,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6803,6 +6803,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  

@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Dubzer <me@dubzer.dev>
 Date: Tue, 25 Aug 2026 16:13:37 +0300
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Display Ultra HDR images on supported screens
+Subject: Display Ultra HDR images on supported screens
 
 ---
  .../src/main/java/org/telegram/ui/PhotoViewer.java   | 12 +++++++++---

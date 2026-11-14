@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Wed, 26 Aug 2026 01:39:32 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: bounded NativeByteBuffer wrapper pool
+Subject: bounded NativeByteBuffer wrapper pool
 
 ---
  .../src/main/java/org/telegram/tgnet/NativeByteBuffer.java | 7 ++++++-

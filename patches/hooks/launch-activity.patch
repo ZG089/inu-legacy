@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Thu, 2 Jul 2026 16:48:11 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: hooks inside LaunchActivity
+Subject: hooks inside LaunchActivity
 
 ---
  TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java | 2 ++
@@ -11,15 +11,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1537,6 +1537,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1551,6 +1551,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
      @SuppressLint("Range")
      private boolean handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword, Browser.Progress progress, boolean rebuildFragments, boolean openedTelegram) {
-+        if (desu.inugram.InuHooks.handleIntent(this, intent)) return true;
++        if (desu.inugram.InuHooks.handleIntent(this, intent, restore)) return true;
          if (GiftInfoBottomSheet.handleIntent(intent, progress)) {
              return true;
          }
-@@ -7206,6 +7207,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -7220,6 +7221,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              Theme.checkAutoNightThemeConditions();
          }
          LocationController.onAppResumed();

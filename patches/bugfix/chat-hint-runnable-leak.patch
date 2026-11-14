@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Fri, 23 Oct 2026 14:01:12 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: fix chat hint timers leaking closed chats
+Subject: fix chat hint timers leaking closed chats
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    | 22 ++++++++++++-------
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3395,6 +3395,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -3402,6 +3402,9 @@ public class ChatActivity extends BaseFragment implements
              AndroidUtilities.cancelRunOnUIThread(chatInviteRunnable);
              chatInviteRunnable = null;
          }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          getNotificationCenter().removePostponeNotificationsCallback(postponeNotificationsWhileLoadingCallback);
          getMessagesController().setLastCreatedDialogId(dialog_id, chatMode == MODE_SCHEDULED, false);
  
-@@ -7096,8 +7099,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -7100,8 +7103,8 @@ public class ChatActivity extends BaseFragment implements
                          savedMessagesTagHint.hide();
                      } else if (!savedMessagesTagHintShown) {
                          lastScrollTime = System.currentTimeMillis();
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (videoConversionTimeHint != null && videoConversionTimeHint.shown()) {
-@@ -7106,8 +7109,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -7110,8 +7113,8 @@ public class ChatActivity extends BaseFragment implements
                  if (botMessageHint != null && botMessageHint.shown()) {
                      botMessageHint.hide();
                  } else {
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  }
                  if (factCheckHint != null) {
                      factCheckHint.hide();
-@@ -28467,8 +28470,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -28500,8 +28503,8 @@ public class ChatActivity extends BaseFragment implements
              videoConversionTimeHint.setJointPx(0, -dp(16) + loc[0] + foundCell.timeX + foundCell.timeWidth / 2f);
              videoConversionTimeHint.show();
          } else {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -28498,6 +28501,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28531,6 +28534,9 @@ public class ChatActivity extends BaseFragment implements
  
      private long lastScrollTime;
      private boolean savedMessagesTagHintShown;
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
      private void checkSavedMessagesTagHint() {
          if (savedMessagesTagHint == null || savedMessagesTagHint.shown() || savedMessagesTagHintShown || !checkedSavedMessagesHint) {
              return;
-@@ -28531,8 +28537,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -28564,8 +28570,8 @@ public class ChatActivity extends BaseFragment implements
  
                  MessagesController.getGlobalMainSettings().edit().putInt("savedsearchtaghint", 1).apply();
              } else {

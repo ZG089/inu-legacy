@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Mon, 31 Aug 2026 04:07:21 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: Fix unclickable share sheet search results
+Subject: Fix unclickable share sheet search results
 
 ---
  .../src/main/java/org/telegram/ui/Components/ShareAlert.java  | 4 ++--
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -1163,7 +1163,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1173,7 +1173,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  
              @Override
              protected boolean allowSelectChildAtPosition(float x, float y) {
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -1243,7 +1243,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+@@ -1253,7 +1253,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
  
              @Override
              protected boolean allowSelectChildAtPosition(float x, float y) {

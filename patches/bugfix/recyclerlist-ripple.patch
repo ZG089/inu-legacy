@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.su>
 Date: Sun, 5 Jul 2026 01:44:58 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: improved ripple handling in RecyclerListView
+Subject: improved ripple handling in RecyclerListView
 
 ---
  .../ui/Components/RecyclerListView.java       | 114 ++++++++++++++++--
@@ -233,7 +233,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -1757,6 +1757,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1758,6 +1758,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              super(context);
              parentPage = page;
              additionalClipBottom = dp(200);

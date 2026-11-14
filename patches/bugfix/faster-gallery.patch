@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Thu, 27 Aug 2026 00:55:20 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: faster gallery handling in attach sheet
+Subject: faster gallery handling in attach sheet
 
 ---
  .../telegram/messenger/MediaController.java   | 42 +++++++++++++++----

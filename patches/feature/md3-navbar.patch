@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
 Date: Tue, 25 Aug 2026 17:51:51 +0400
-Subject: From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001 Subject: md3-styled bottom navigation bar
+Subject: md3-styled bottom navigation bar
 
 ---
  .../ui/Components/glass/GlassTabView.java     | 35 +++++++++++++++----
