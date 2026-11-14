@@ -1,159 +1,117 @@
-# Inugram
+# inu-legacy
 
-> there are many tga forks, but this one is mine
+[![Latest Release](https://img.shields.io/github/v/release/ZG089/inu-legacy?label=release&color=blue)](https://github.com/ZG089/inu-legacy/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ZG089/inu-legacy/legacy.yml?branch=main&label=build)](https://github.com/ZG089/inu-legacy/actions/workflows/legacy.yml)
+[![Target ABI](https://img.shields.io/badge/ABI-armeabi--v7a-orange)](#downloads)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-a very cool and dog-pilled fork (or rather, *patchset*, see below) of Telegram Android
+A 32-bit ARM (`armeabi-v7a`) port of [teidesu/inugram](https://github.com/teidesu/inugram)
 
-## primary goals
+Upstream Inugram does not provide 32-bit ARM support, targeting `arm64-v8a` exclusively. `inu-legacy` resatores full 32-bit compatibility for older hardware and legacy devices while maintaining automated synchronization with upstream releases.
 
-this fork is primarily intended for long-term Telegram users who want a clean and robust exparience without all the bloat.
+---
 
-you can expect:
-- removed annoyances
-- *a lot* of qol features
-- ui tweaks to make it look prettier and cleaner
-- opinionated defaults
+## Downloads
 
-all that while still allowing users to disable our custom tweaks to (mostly) achieve the stock experience (but why?)
+Releases are published automatically on every upstream release tag:
 
-see [FEATURES.md](FEATURES.md) for a non-exhaustive list of what's added/tweaked/fixed (kept in sync as patches land).
+| Variant | Artifact | Description |
+| :--- | :--- | :--- |
+| **Full** | `inugram-legacy-<version>-<sha>-<run>-armeabi-v7a.apk` | Includes the QuickJS plugin engine and LSPlant ART method hooking. |
+| **Pluginless** | `inugram-legacy-<version>-<sha>-<run>-pluginless-armeabi-v7a.apk` | Lightweight build without native plugin/hooking runtimes. Lower memory footprint. |
 
-### why should i use this over whatevergram?
+Download signed APKs from [GitHub Releases](https://github.com/ZG089/inu-legacy/releases).
 
-i don't know. maybe you shouldn't.
+---
 
-inugram exists primarily for my own personal use, because i got tired of the bloat (and lack of transparency) that most forks are, and latest stock is borderline unusable.
-and apparently my vision for a good ui/ux client and declutter aligns well with many long-term telegram users who spend hours in the app daily, so here we are.
+## Features
 
-feel free to fork this repo and remove patches you don't like or add your own, or even "steal" the features you like to your own fork. i really don't care.
+### 32-Bit ARM Port
+* **Full `armeabi-v7a` support:** Runs on 32-bit ARM Android devices (API level 23+).
+* **Dual variants:** Available in both **Full** (plugin engine + ART hooking) and **Pluginless** variants.
+* **Class-aware ELF parsing:** Native 32-bit/64-bit ELF parser (`elf.rs`) for ART symbol and string resolution from `/system/lib/libart.so`.
+* **32-bit NaN-boxed QuickJS:** QuickJS runtime configured with 32-bit pointer tagging for script plugins.
+* **Zero-conflict patch layer:** Architecture overrides are handled dynamically via Gradle (`legacy/armv7.init.gradle`) without modifying upstream patches or patch series.
 
-## patchset, not a fork
+### Declutter & Debloat
+* **Story removal:** Option to hide Telegram stories completely from the dialogs list and user profiles.
+* **AdGuard tracking filter:** Automatic stripping of tracking tokens from shared URLs.
+* **Annoyance toggles:** Hide premium reaction upsells, channel recommendation sheets, trending stickers, and bot menu buttons.
+* **Performance tuning:** Disable animated avatars, glass glare effects, and adjust animation speed multipliers.
 
-unlike most alternative clients based on Telegram Android, Inugram is a patchset.
-it is not a fork in the traditional sense, but rather a collection of patches applied to the stock codebase.
+### Interface & Theming
+* **Monet (Material You):** Dynamic color palette support with light, dark, and true AMOLED modes.
+* **Classic UI mode:** Toggleable option to revert post-v12.6 floating "liquid glass" surfaces to standard flat headers and panels.
+* **Custom font stacks:** Manage font families for the whole application with custom fallback definitions, plus dedicated monospace fonts for code blocks.
+* **Material 3 elements:** M3 switches, sliders, FABs, and predictive back animations.
+* **Icon packs:** Support for `.icons` packs (SVG/PNG/Lottie) including bundled Solar icons.
 
-a few advantages of such approach:
-- easier rebase, since the stock code vs fork code is clearly separated
-- easier to audit the changes, since the modifications are all in one place
-- easier for bugfixes to land upstream (although i dont think they really care)
+### Chat & Media QoL
+* **Double-tap actions:** Configurable shortcuts on messages (reply, copy, forward, edit, save).
+* **Precise timestamps:** Show seconds in message timestamps.
+* **Persistent reply state:** Retains message reply context across peer navigation.
+* **Unrestricted media:** Option to view and save timer-restricted media without screenshot blocking.
+* **Video & GIF controls:** Original video quality dispatch and seekable GIF timeline controls.
 
-the patchset is managed using stgit and a few supporting scripts in `scripts/`.
+### Extensibility & Plugins (Full Variant)
+* **QuickJS sandbox:** Isolated TypeScript/JavaScript runtime for user plugins.
+* **Runtime ART hooking:** LSPlant + ShadowHook bridge for client behavior modifications without APK repacking.
 
-## repo layout
+---
 
-- `src/fork`: our custom Kotlin code
-- `src/fork-app`: ditto, for the bits that live in the app module instead of the library one
-- `src/core`: InuCore, a plain jvm module (so it can be tested without a device)
-- `src/native`: rust plugin engine (quickjs + jni bridge)
-- `src/test`: on-device suite for the plugin bridge (`kotlin/`) and the files it needs (`assets/`)
-- `src/vendor`: third-party code copied in as-is
-- `src/res`: our custom resources
-- `sdk`: the plugin sdk - the api typings (`sdk/types`) and the author-facing cli (`sdk/cli`)
-- `patches/`: stock patches
-- `series`: patch apply order
-- `upstream-commit`: pinned Telegram commit
-- `worktree/`: local Telegram checkout, gitignored
-- `worktree-pluginless/`: separate checkout prepared by `setup --pluginless`, gitignored. should not be used for development.
+## Architecture & Upstream Sync
 
-patches are grouped by their type:
+`inu-legacy` maintains clean separation between upstream Inugram code and fork-specific build logic:
 
-| type | description |
-| --- | --- |
-| `bugfix` | fixes a bug in the upstream codebase |
-| `feature` | adds a contained feature (one or more, if they're related) to the app (qol, ui tweaks, etc.) |
-| `debloat` | hiding stock "features" behind a toggle. you could also call it "un-feature" |
-| `hooks` | small hooks into the various parts of the app to jump into our custom kotlin code for easier maintenance |
-| `misc` | everything else, stuff like build support and such |
+* **No stock patch modification:** All stock patches in `patches/` and `series` remain byte-identical to upstream.
+* **Dynamic Gradle initialization:** [`legacy/armv7.init.gradle`](legacy/armv7.init.gradle) intercepts AGP's DSL at build time, enforcing `abiFilters ['armeabi-v7a']` and parameterizing `cargo-ndk` flags for `buildInuNative`.
+* **Automated 6-hour sync workflow:** [`.github/workflows/sync.yml`](.github/workflows/sync.yml) monitors `teidesu/inugram`:
+  * Detects new upstream commits, merges them cleanly into `main`, and triggers CI builds.
+  * Detects newly published upstream release tags and builds, signs, and publishes matching legacy releases.
+* **Merge protection:** `.gitattributes` and the sync workflow preserve fork-specific configurations during upstream merges.
 
-each patch strives to be small and self-contained. as a rule of thumb, we should be able to remove a patch and still have the app build, although this is not always possible.
+---
 
-in stgit, patch names are delimited using double underscore, e.g. `patches/misc/whatever.patch` becomes `misc__whatever` in stgit.
+## Building Locally
 
-## contributing
+### Prerequisites
+* Linux or macOS
+* Node.js 20+ and `pnpm`
+* Android SDK (API 36, NDK 27.2 & 29.0, CMake 3.31.6)
+* JDK 21 (Temurin recommended)
+* Rust toolchain with target `armv7-linux-androideabi`
 
-contributions are welcome, but before implementing a new feature please ping me to discuss it
+### Build Pluginless Variant
+```sh
+pnpm install
+pnpm run setup -- --pluginless
+(cd worktree-pluginless/TMessagesProj/jni/gram-wallet && rustup target add armv7-linux-androideabi)
+./gradlew -p worktree-pluginless -I "$PWD/legacy/armv7.init.gradle" :TMessagesProj_App:assembleRelease
+```
 
-requirements: Node.js 20+, `git`, `stg`
-
+### Build Full Variant (with Plugins)
 ```sh
 pnpm install
 pnpm run setup
+(cd worktree/TMessagesProj/jni/gram-wallet && rustup target add armv7-linux-androideabi)
+(cd src/native && rustup target add armv7-linux-androideabi)
+./gradlew -p worktree -I "$PWD/legacy/armv7.init.gradle" :TMessagesProj_App:assembleRelease
 ```
 
-this will clone the upstream into `worktree/` and set up stgit in it, along with all the current patches.
-you can then simply open (not import!) `worktree/` in Android Studio and start hacking. it should build right away.
+Built APKs are output to:
+`worktree*/TMessagesProj_App/build/outputs/apk/release/`
 
-`pnpm run setup -- --pluginless` prepares `worktree-pluginless/` instead, skipping
-`feature/plugins.patch`, LSPlant and its nested submodules/local patches, and plugin API generation.
-It also works with `--ci` and `--no-submodules`. Build it with `pnpm run build-debug-pluginless`.
-The plain build excludes the plugin engine, native hooking libraries, plugin screens, and plugin test assets.
-Other scripts continue to target `worktree/`.
+---
 
-Setup writes the checkout's build variant to the ignored `inu-build.properties` file.
-Gradle exposes it as `BuildConfig.INU_PLUGINLESS` in both Android modules.
+## Acknowledgements
 
-Fork Kotlin sources are linked under `TMessagesProj/src/inu/kotlin` and preprocessed by Gradle's
-`preprocessInuSources` task into `build/generated/inu/kotlin`. Edit `src/fork`, not the generated files.
-Use `// #if PLUGINS`, optional `// #else`, and `// #endif` around plugin-only imports and code.
-Both variants are preprocessed; nested directives are supported, excluded lines remain blank to
-preserve line numbers, and malformed directives fail the build.
+* [teidesu/inugram](https://github.com/teidesu/inugram) — Upstream Inugram patchset
+* [Telegram Android](https://github.com/DrKLO/Telegram) — Base application
+* [NagramX](https://github.com/risin42/NagramX) & [Nekogram](https://github.com/Nekogram/Nekogram) — Ported features and inspirations
+* [LSPlant](https://github.com/LSPosed/LSPlant) & [ShadowHook](https://github.com/bytedance/shadowhook) — Native ART hooking runtimes
 
-### adding a new patch
+---
 
-```bash
-stg new misc__my-patch -m 'my patch description' # to create a patch
-# ...do whatever you need in worktree/...
-stg refresh # to "commit" the worktree changes into the topmost patch
-pnpm run export # to export stgit into patches/
-```
+## License
 
-### modifying an existing patch
-
-```bash
-# option 1: edit the patch in-place via stg refresh
-# ...do whatever you need in worktree/...
-stg refresh -p misc__my-patch # --index to only append staged changes
-pnpm run export
-
-# *pretty much* same as above, but manually
-# ...do whatever you need in worktree/...
-stg new tmp-patch
-stg refresh
-stg rebase -i # move tmp1 below the patch you want to edit, and replace "edit" with "s"
-pnpm run export
-
-# option 2: push the patch to the top of the stack
-stg float misc__my-patch
-# ...do whatever you need in worktree/...
-stg refresh
-pnpm run export
-```
-
-as a rule of thumb: prefer the former, but if you get a lot of merge conflicts, try `float`-ing instead.
-
-### auditing patch interactions
-
-```bash
-pnpm run lint-patches
-pnpm run lint-patches -- --check
-```
-
-the audit reports later patches that fully revert an earlier patch or delete lines last changed by one. `--check` exits non-zero when it finds either.
-
-## acknowledgements
-
-- the original [Telegram Android](https://github.com/DrKLO/Telegram) - the basis for this fork
-- a bunch of features were ported from [Nekogram](https://github.com/Nekogram/Nekogram), [NagramX](https://github.com/risin42/NagramX), [materialgram](https://github.com/kukuruzka165/materialgram)
-- `src/res/drawable/icplaceholder.jpg` is a blurred version of [this artwork by Chobles](https://www.pixiv.net/en/artworks/128756420)
-- Tabler icons by [Tabler Team](https://tabler.io/icons)
-- Solar icon pack by [@r4in80w](https://t.me/r4in80w)
-- AdGuard URL Tracking filter by [AdGuard](https://adguard.com/)
-
-this project is llm-assisted: a bunch of the code and the patches were (and will be) written by claude. this doesn't mean it's "ai slop", i still review all the code myself,
-but im not an android dev by any means so it might not be perfect. ai-assisted contributions are welcome as long as you disclose that in the pr.
-
-if you have an issue with that - go make your own fork.
-
-## license
-
-abolish copyright law tbh, but let's just say the repo is licensed under MIT
+This repository is licensed under the [MIT License](LICENSE).

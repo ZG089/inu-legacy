@@ -23,6 +23,7 @@ jobs:
         run: |
           git config user.name "ZG089"
           git config user.email "159061718+ZG089@users.noreply.github.com"
+          git config merge.ours.driver true
 
       - name: check upstream commits and releases
         id: check
@@ -54,7 +55,22 @@ jobs:
         if: steps.check.outputs.new_commits > 0
         run: |
           echo "Merging upstream/main..."
-          git merge upstream/main -m "Merge upstream/main"
+          if ! git merge upstream/main -m "Merge upstream/main"; then
+            conflicts=$(git diff --name-only --diff-filter=U)
+            echo "Conflicts detected in: $conflicts"
+            for file in $conflicts; do
+              if [ "$file" = "README.md" ] || [ "$file" = "LEGACY.md" ]; then
+                git checkout HEAD -- "$file"
+                git add "$file"
+              fi
+            done
+            if [ -z "$(git diff --name-only --diff-filter=U)" ]; then
+              git commit --no-edit
+            else
+              echo "::error::Unresolvable merge conflict in tracked patches or code"
+              exit 1
+            fi
+          fi
           git push origin main
 
       - name: trigger release build

@@ -1,0 +1,6 @@
+# Keep fork-specific documentation and workflows during upstream merges
+README.md merge=ours
+LEGACY.md merge=ours
+.github/workflows/legacy.yml merge=ours
+.github/workflows/sync.yml merge=ours
+legacy/** merge=ours
