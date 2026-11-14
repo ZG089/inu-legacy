@@ -7,7 +7,7 @@
 
 A 32-bit ARM (`armeabi-v7a`) port of [teidesu/inugram](https://github.com/teidesu/inugram)
 
-Upstream Inugram does not provide 32-bit ARM support, targeting `arm64-v8a` exclusively. `inu-legacy` resatores full 32-bit compatibility for older hardware and legacy devices while maintaining automated synchronization with upstream releases.
+Upstream Inugram does not provide 32-bit ARM support, targeting `arm64-v8a` exclusively. `inu-legacy` adds full 32-bit compatibility for older hardware and legacy devices while maintaining automated synchronization with upstream releases.
 
 ---
 
