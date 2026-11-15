@@ -34,6 +34,9 @@ jobs:
           git remote add upstream https://github.com/teidesu/inugram.git || true
           git fetch upstream main --tags
 
+          # what the build's Telegram post lists commits from
+          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
           new_commits=$(git rev-list --count HEAD..upstream/main)
           echo "Found $new_commits new commit(s) from upstream/main"
           echo "new_commits=$new_commits" >> "$GITHUB_OUTPUT"
@@ -73,12 +76,22 @@ jobs:
           fi
           git push origin main
 
-      - name: trigger release build
-        if: steps.check.outputs.release_needed == 'true'
+      # exactly one run per sync: a release run already covers the merged commits, so a CI run next to
+      # it would build the same thing and post it twice. The push above uses the workflow token, which
+      # never starts legacy.yml's push trigger; replace it with a PAT and this step needs revisiting.
+      - name: start build
+        if: steps.check.outputs.release_needed == 'true' || steps.check.outputs.new_commits > 0
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          RELEASE_NEEDED: ${{ steps.check.outputs.release_needed }}
+          UPSTREAM_TAG: ${{ steps.check.outputs.upstream_tag }}
+          BASE_SHA: ${{ steps.check.outputs.base }}
         run: |
-          tag="${{ steps.check.outputs.upstream_tag }}-legacy"
-          echo "Triggering release build for tag: $tag"
-          gh workflow run legacy.yml -f release=true -f release_tag="$tag"
+          if [ "$RELEASE_NEEDED" = true ]; then
+            echo "Starting release build for ${UPSTREAM_TAG}-legacy"
+            gh workflow run legacy.yml -f release=true -f release_tag="${UPSTREAM_TAG}-legacy" -f base_sha="$BASE_SHA"
+          else
+            echo "Starting CI build"
+            gh workflow run legacy.yml -f base_sha="$BASE_SHA"
+          fi

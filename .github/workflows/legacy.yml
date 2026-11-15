@@ -4,6 +4,7 @@ name: legacy
 # Builds the 32-bit (armeabi-v7a) APK for both variants (full with plugins and pluginless).
 # On main, pushes trigger CI builds. When a release is requested or triggered by sync-upstream,
 # it signs both APKs and publishes them to GitHub Releases, removing temporary CI artifacts.
+# Every run ends with one Telegram post (legacy/telegram-notify.sh).
 
 on:
   push:
@@ -24,6 +25,10 @@ on:
         description: Optional custom release tag (e.g. v13.2.2-56-legacy)
         type: string
         default: ''
+      base_sha:
+        description: List the commits since this sha in the Telegram post (sync-upstream sets it)
+        type: string
+        default: ''
 
 concurrency:
   group: legacy-${{ github.ref }}
@@ -33,6 +38,7 @@ permissions: {}
 
 jobs:
   build:
+    name: build (${{ matrix.variant }})
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
@@ -193,6 +199,8 @@ jobs:
     permissions:
       contents: write
       actions: write
+    outputs:
+      tag: ${{ steps.publish.outputs.tag }}
     steps:
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
@@ -237,6 +245,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/release.keystore"
 
       - name: publish release
+        id: publish
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -247,6 +256,7 @@ jobs:
             ver=$(basename "$first_apk" | sed -E 's/inugram-legacy-([0-9.]+)-.*/\1/')
             tag="v$ver-legacy.${{ github.run_number }}"
           fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
           if target=$(gh release view "$tag" --json targetCommitish --jq .targetCommitish 2>/dev/null); then
             if [ "$target" != "$GITHUB_SHA" ]; then
@@ -269,3 +279,30 @@ jobs:
             echo "Deleting artifact $id..."
             gh api -X DELETE "repos/$GH_REPO/actions/artifacts/$id" || true
           done
+
+  # one message per run, whatever happened; a cancelled run (superseded by a newer one) stays quiet
+  notify:
+    needs: [build, release]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: post to telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID || '-1004364828439' }}
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ inputs.base_sha || (github.event_name == 'push' && github.event.before) || '' }}
+          RELEASE_REQUESTED: ${{ inputs.release || inputs.release_tag != '' }}
+          RELEASE_RESULT: ${{ needs.release.result }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+        run: bash legacy/telegram-notify.sh
