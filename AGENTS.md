@@ -112,6 +112,23 @@ conflict); never `git add -A`/`git add .` or a directory. Never `stg undo --hard
 `stg reset --hard` or `git checkout -- <dir>`: they delete those untracked files.
 If a refresh goes wrong, stop and ask the user instead of undoing it.
 
+## Commits and pushing
+
+- **Stage explicit files only**: Never run `git add .`, `git add -A`, or add directories.
+  The worktree contains untracked symlinks and build files that must never be staged.
+  Stage only specific paths (`git add <file>`).
+- **Non-patch commits**: Root files, documentation, `legacy/` scripts, and `.github/workflows`
+  do not alter the StGit stack. Husky's pre-commit hook verifies `patches/` against StGit and
+  will reject non-patch commits; bypass it using `git commit --no-verify` (or `git commit -n`).
+- **Stock patch commits**: After modifying patches in `worktree/` with StGit, run `pnpm run export`
+  to synchronize `patches/` and `series`. Stage `patches/` and `series`, then commit normally
+  without `--no-verify`.
+- **Workflow linting**: Validate any modified GitHub Actions workflows with
+  `~/.local/bin/actionlint .github/workflows/*.yml` prior to committing.
+- **Pushing**: Push with `git push origin main`. Never force-push (`--force`) to `main`.
+- **No destructive commands**: Never run `git checkout -- <dir>`, `git reset --hard`,
+  `git clean -fd`, `stg undo --hard`, or `stg reset --hard`.
+
 ## Config, database, and settings
 
 ```kotlin
