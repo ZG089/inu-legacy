@@ -62,7 +62,7 @@ jobs:
           echo "Merging upstream/main..."
           msg="Merge upstream/main"
           if [ "$RELEASE_NEEDED" = "true" ]; then
-            msg="Merge upstream/main [skip build] [skip ci]"
+            msg="Merge upstream/main [skip build]"
           fi
           if ! git merge upstream/main -m "$msg"; then
             conflicts=$(git diff --name-only --diff-filter=U)
