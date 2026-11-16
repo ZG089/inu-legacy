@@ -43,7 +43,18 @@ status() { # job name -> "<emoji> <word>"
 plugin=$(status 'build (full)')
 pluginless=$(status 'build (pluginless)')
 
-# --- headline, link, overall state
+# --- headline, links, and overall state
+if [ -n "$release_tag" ]; then
+  title="Release $release_tag"
+  title_url="$url/releases/tag/$release_tag"
+  release_url="$url/releases/tag/$release_tag"
+else
+  title="CI build #$run_number"
+  title_url="$url/actions/runs/$run_id"
+  release_url="$url/releases"
+fi
+source_url="$url/tree/$sha"
+
 if [ "$release_requested" = true ]; then
   case $release_result in
     success) release_line='✅ published' ;;
@@ -51,17 +62,8 @@ if [ "$release_requested" = true ]; then
     cancelled) release_line='⏹ cancelled' ;;
     *) release_line='⏭ not run' ;;
   esac
-  if [ "$release_result" = success ] && [ -n "$release_tag" ]; then
-    title="Release $release_tag"
-    link="Release: <a href=\"$url/releases/tag/$release_tag\">$(html <<<"$release_tag")</a>"
-  else
-    title='Release not published'
-    link="Workflow run: <a href=\"$url/actions/runs/$run_id\">#$run_number</a>"
-  fi
 else
   release_line=''
-  title="CI build #$run_number"
-  link="Workflow run: <a href=\"$url/actions/runs/$run_id\">#$run_number</a>"
 fi
 
 all="$plugin $pluginless $release_line"
@@ -102,26 +104,35 @@ while IFS=$'\t' read -r h s; do
 done < <(head -n $max_commits <<<"$commits")
 [ "$total" -le $max_commits ] || lines+="- … and $((total - max_commits)) more"$'\n'
 
-# --- message
-text="$state <b>$(html <<<"$title")</b>
-armeabi-v7a • $repo
-
-<b>Plugin</b> (full): $plugin
-<b>Pluginless</b>: $pluginless"
-[ -z "$release_line" ] || text+="
-<b>Publish</b>: $release_line"
-text+="
-
-Commit: <a href=\"$url/commit/$sha\">${sha:0:8}</a> on <code>$(html <<<"${GITHUB_REF_NAME:-main}")</code>
-$link
+# --- message & buttons
+text="$state <b><a href=\"$title_url\">$(html <<<"$title")</a></b>
 
 <b>Merged commits ($total)</b>
 <blockquote expandable>${lines%$'\n'}</blockquote>"
 
+reply_markup=$(jq -nc \
+  --arg r_url "$release_url" \
+  --arg s_url "$source_url" \
+  '{inline_keyboard: [[{text: "🏷️ Release Tag", url: $r_url}, {text: "📦 Source Code", url: $s_url}]]}')
+
+apk_dir="${APK_DIR:-apks}"
+apks=()
+if [ -d "$apk_dir/legacy-signed" ] && [ -n "$(find "$apk_dir/legacy-signed" -name '*.apk' 2>/dev/null)" ]; then
+  mapfile -t apks < <(find "$apk_dir/legacy-signed" -name '*.apk' | sort)
+elif [ -d "$apk_dir" ]; then
+  mapfile -t apks < <(find "$apk_dir" -name '*.apk' | sort)
+fi
+
 if [ -n "${DRY_RUN:-}" ]; then
-  printf '%s\n' "$text"
+  printf '%s\n\n' "$text"
+  echo "Inline keyboard: $reply_markup"
+  echo "Found ${#apks[@]} APK(s) to attach:"
+  for apk in "${apks[@]}"; do
+    echo "  - $apk"
+  done
   exit 0
 fi
+
 if [ -z "${TELEGRAM_BOT_TOKEN:-}" ]; then
   echo '::notice::TELEGRAM_BOT_TOKEN is not set, skipping the Telegram post'
   exit 0
@@ -131,10 +142,34 @@ response=$(curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRA
   --data-urlencode "chat_id=${TELEGRAM_CHAT_ID:?TELEGRAM_CHAT_ID is not set}" \
   --data-urlencode 'parse_mode=HTML' \
   --data-urlencode 'disable_web_page_preview=true' \
-  --data-urlencode "text=$text") || { echo '::error::could not reach the Telegram API'; exit 1; }
+  --data-urlencode "text=$text" \
+  --data-urlencode "reply_markup=$reply_markup") || { echo '::error::could not reach the Telegram API'; exit 1; }
+
 if ! jq -e '.ok == true' >/dev/null 2>&1 <<<"$response"; then
   reason=$(jq -r '.description // "unparsable response"' 2>/dev/null <<<"$response" || true)
   echo "::error::Telegram refused the message: ${reason:-unparsable response}"
   exit 1
 fi
-echo 'posted to Telegram'
+echo 'posted message to Telegram'
+
+msg_id=$(jq -r '.result.message_id' <<<"$response")
+
+for apk in "${apks[@]}"; do
+  [ -f "$apk" ] || continue
+  apk_name=$(basename "$apk")
+  echo "Sending document: $apk_name..."
+
+  doc_resp=$(curl -sS --max-time 300 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+    -F "chat_id=${TELEGRAM_CHAT_ID}" \
+    -F "reply_to_message_id=${msg_id}" \
+    -F "document=@${apk}" \
+    -F "caption=📦 <code>${apk_name}</code>" \
+    -F "parse_mode=HTML") || true
+
+  if jq -e '.ok == true' >/dev/null 2>&1 <<<"$doc_resp"; then
+    echo "Uploaded $apk_name successfully"
+  else
+    desc=$(jq -r '.description // "upload failed"' 2>/dev/null <<<"$doc_resp" || true)
+    echo "::warning::Could not attach $apk_name to Telegram: $desc"
+  fi
+done
