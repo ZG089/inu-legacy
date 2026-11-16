@@ -56,9 +56,15 @@ jobs:
 
       - name: merge upstream commits
         if: steps.check.outputs.new_commits > 0
+        env:
+          RELEASE_NEEDED: ${{ steps.check.outputs.release_needed }}
         run: |
           echo "Merging upstream/main..."
-          if ! git merge upstream/main -m "Merge upstream/main"; then
+          msg="Merge upstream/main"
+          if [ "$RELEASE_NEEDED" = "true" ]; then
+            msg="Merge upstream/main [skip build] [skip ci]"
+          fi
+          if ! git merge upstream/main -m "$msg"; then
             conflicts=$(git diff --name-only --diff-filter=U)
             echo "Conflicts detected in: $conflicts"
             for file in $conflicts; do
@@ -68,7 +74,7 @@ jobs:
               fi
             done
             if [ -z "$(git diff --name-only --diff-filter=U)" ]; then
-              git commit --no-edit
+              git commit -m "$msg"
             else
               echo "::error::Unresolvable merge conflict in tracked patches or code"
               exit 1

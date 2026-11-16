@@ -30,49 +30,59 @@ html() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
 jobs=$(gh api "repos/$repo/actions/runs/$run_id/jobs?per_page=100" \
   --jq '.jobs[] | [.name, (.conclusion // .status)] | @tsv' 2>/dev/null || true)
 
-status() { # job name -> "<emoji> <word>"
+status() { # job name -> status word
   case $(awk -F'\t' -v n="$1" '$1 == n { print $2; exit }' <<<"$jobs") in
-    success) echo '✅ success' ;;
-    failure | timed_out) echo '❌ failed' ;;
-    cancelled) echo '⏹ cancelled' ;;
-    skipped) echo '⏭ skipped' ;;
-    *) echo '❔ unknown' ;;
+    success) echo 'success' ;;
+    failure | timed_out) echo 'failed' ;;
+    cancelled) echo 'cancelled' ;;
+    skipped) echo 'skipped' ;;
+    *) echo 'unknown' ;;
   esac
 }
 
 plugin=$(status 'build (full)')
 pluginless=$(status 'build (pluginless)')
 
+api_url=${TELEGRAM_API_URL:-https://api.telegram.org}
+
 # --- headline, links, and overall state
 if [ -n "$release_tag" ]; then
   title="Release $release_tag"
   title_url="$url/releases/tag/$release_tag"
   release_url="$url/releases/tag/$release_tag"
+  variant_tag="#Release"
+  btn1_text="🏷️ Release Tag"
+  btn1_url="$release_url"
 else
   title="CI build #$run_number"
   title_url="$url/actions/runs/$run_id"
   release_url="$url/releases"
+  variant_tag="#CI"
+  btn1_text="🔍 View CI run"
+  btn1_url="$url/actions/runs/$run_id"
 fi
 source_url="$url/tree/$sha"
 
 if [ "$release_requested" = true ]; then
   case $release_result in
-    success) release_line='✅ published' ;;
-    failure) release_line='❌ failed' ;;
-    cancelled) release_line='⏹ cancelled' ;;
-    *) release_line='⏭ not run' ;;
+    success) release_line='published' ;;
+    failure) release_line='failed' ;;
+    cancelled) release_line='cancelled' ;;
+    *) release_line='not run' ;;
   esac
 else
   release_line=''
 fi
 
 all="$plugin $pluginless $release_line"
-if [[ $all == *❌* ]]; then
+if [[ $all == *❌* || $all == *failed* ]]; then
   state='❌'
-elif [[ $all == *❔* || $all == *⏹* || $all == *⏭* ]]; then
+elif [[ $all == *❔* || $all == *⏹* || $all == *⏭* || $all == *cancelled* || $all == *not\ run* ]]; then
   state='⚠️'
+elif [ "$release_requested" = true ] || [ -n "$release_tag" ]; then
+  state='🚀'
 else
-  state='✅'
+  state='✨'
 fi
 
 # --- commits: BASE_SHA..head without merge commits (a sync's merged upstream commits are listed, the
@@ -108,12 +118,15 @@ done < <(head -n $max_commits <<<"$commits")
 text="$state <b><a href=\"$title_url\">$(html <<<"$title")</a></b>
 
 <b>Merged commits ($total)</b>
-<blockquote expandable>${lines%$'\n'}</blockquote>"
+<blockquote expandable>${lines%$'\n'}</blockquote>
+
+$variant_tag"
 
 reply_markup=$(jq -nc \
-  --arg r_url "$release_url" \
+  --arg b1_text "$btn1_text" \
+  --arg b1_url "$btn1_url" \
   --arg s_url "$source_url" \
-  '{inline_keyboard: [[{text: "🏷️ Release Tag", url: $r_url}, {text: "📦 Source Code", url: $s_url}]]}')
+  '{inline_keyboard: [[{text: $b1_text, url: $b1_url}, {text: "📦 Source Code", url: $s_url}]]}')
 
 apk_dir="${APK_DIR:-apks}"
 apks=()
@@ -138,7 +151,7 @@ if [ -z "${TELEGRAM_BOT_TOKEN:-}" ]; then
   exit 0
 fi
 
-response=$(curl -sS --max-time 30 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+response=$(curl -sS --max-time 30 -X POST "${api_url}/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
   --data-urlencode "chat_id=${TELEGRAM_CHAT_ID:?TELEGRAM_CHAT_ID is not set}" \
   --data-urlencode 'parse_mode=HTML' \
   --data-urlencode 'disable_web_page_preview=true' \
@@ -157,9 +170,11 @@ msg_id=$(jq -r '.result.message_id' <<<"$response")
 for apk in "${apks[@]}"; do
   [ -f "$apk" ] || continue
   apk_name=$(basename "$apk")
-  echo "Sending document: $apk_name..."
+  size=$(stat -c%s "$apk" 2>/dev/null || wc -c <"$apk")
+  mb=$(( (size + 1048575) / 1048576 ))
+  echo "Sending document: $apk_name ($mb MB)..."
 
-  doc_resp=$(curl -sS --max-time 300 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+  doc_resp=$(curl -sS --max-time 300 -X POST "${api_url}/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
     -F "chat_id=${TELEGRAM_CHAT_ID}" \
     -F "reply_to_message_id=${msg_id}" \
     -F "document=@${apk}" \
@@ -171,5 +186,20 @@ for apk in "${apks[@]}"; do
   else
     desc=$(jq -r '.description // "upload failed"' 2>/dev/null <<<"$doc_resp" || true)
     echo "::warning::Could not attach $apk_name to Telegram: $desc"
+
+    # If Telegram Bot API rejected upload (e.g. 50 MB limit exceeded on api.telegram.org),
+    # post a reply message with direct download link so users can still download it:
+    if [ -n "$release_tag" ]; then
+      dl_url="$url/releases/download/$release_tag/$apk_name"
+      dl_text="📦 <b>$(html <<<"$apk_name")</b> (${mb} MB)
+⚠️ <i>Exceeds Telegram Bot 50 MB limit</i>
+📥 <a href=\"$dl_url\">Direct Download</a>"
+      curl -sS --max-time 30 -X POST "${api_url}/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+        --data-urlencode "reply_to_message_id=${msg_id}" \
+        --data-urlencode 'parse_mode=HTML' \
+        --data-urlencode 'disable_web_page_preview=true' \
+        --data-urlencode "text=$dl_text" || true
+    fi
   fi
 done
