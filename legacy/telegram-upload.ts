@@ -1,3 +1,4 @@
+import type { InputRichMessageMedia } from '@mtcute/node'
 import { BotKeyboard, html, InputMedia, MemoryStorage, TelegramClient } from '@mtcute/node'
 import { execSync } from 'node:child_process'
 import fs from 'node:fs/promises'
@@ -52,7 +53,7 @@ function getCommits(baseSha: string, headSha: string, maxCommits = 25, maxSubjec
     if (s.length > maxSubject) {
       s = s.slice(0, maxSubject - 1) + '…'
     }
-    lines.push(`- ${h} • ${html.escape(s)}`)
+    lines.push(`- ${h} • ${s}`)
   }
 
   if (total > maxCommits) {
@@ -94,8 +95,6 @@ async function main() {
   const { lines, total } = getCommits(baseSha, sha)
   const commitsBlock = lines.join('\n')
 
-  const text = `${state} <b><a href="${titleUrl}">${html.escape(title)}</a></b>\n\n<b>New commits (${total})</b>\n<blockquote expandable>${commitsBlock}</blockquote>\n\n${variantTag}`
-
   const btn1Text = isRelease ? '🏷️ Release Tag' : '🔍 View CI run'
   const btn1Url = isRelease ? titleUrl : `${repoUrl}/actions/runs/${runId}`
 
@@ -115,8 +114,34 @@ async function main() {
     console.log(`  - ${a} (${(s / 1024 / 1024).toFixed(1)} MB)`)
   }
 
+  // Build rich markdown message (upstream style)
+  const attachments: Record<string, InputRichMessageMedia> = {}
+  const docMarkdownLines: string[] = []
+
+  for (let i = 0; i < apks.length; i++) {
+    const apk = apks[i]
+    const fileName = basename(apk)
+    const id = `apk${i}`
+    // @ts-expect-error mtcute omits document from rich-media type
+    attachments[id] = InputMedia.document(`file:${resolve(apk)}`, {
+      fileName,
+      fileMime: 'application/vnd.android.package-archive',
+    })
+    docMarkdownLines.push(`![](tg://document?id=${id} "${fileName}")`)
+  }
+
+  const richContent = [
+    `## ${state} [${title}](${titleUrl})`,
+    ...docMarkdownLines,
+    `<details><summary>New commits (${total})</summary>\n\n${commitsBlock}\n</details>`,
+    `<footer>${variantTag}</footer>`,
+  ].filter(Boolean).join('\n\n')
+
+  // Plain HTML string for fallback with proper entity parsing
+  const htmlFormatted = `${state} <b><a href="${titleUrl}">${html.escape(title)}</a></b><br><br><b>New commits (${total})</b><br><blockquote expandable>${html.escape(commitsBlock)}</blockquote><br><br>${variantTag}`
+
   if (process.env.DRY_RUN === '1') {
-    console.log('\n[DRY RUN Message]:\n' + text)
+    console.log('\n[DRY RUN Rich Message]:\n' + richContent)
     console.log('\n[Buttons]:', btn1Text, '->', btn1Url, '| Source Code ->', sourceUrl)
     return
   }
@@ -144,33 +169,46 @@ async function main() {
     }
 
     console.log('Sending message to', chatId)
-    const sentMsg = await tg.sendText(chatId, text, {
-      replyMarkup: keyboard,
-      disableWebPreview: true,
-    })
-    console.log('Message sent successfully (ID:', sentMsg.id, ')')
 
-    // Send APK documents via MTProto
-    for (const apk of apks) {
-      const fileName = basename(apk)
-      const absPath = resolve(apk)
-      const sizeMb = ((await fs.stat(absPath)).size / 1024 / 1024).toFixed(1)
-      console.log(`Uploading ${fileName} (${sizeMb} MB) via MTProto...`)
+    let sent = false
+    if (apks.length > 0) {
+      try {
+        console.log('Sending rich message with embedded APK attachments (upstream style)...')
+        await tg.sendRichMessage(chatId, {
+          content: {
+            type: 'markdown',
+            content: richContent,
+            attachments,
+          },
+          replyMarkup: keyboard,
+        })
+        sent = true
+        console.log('Rich message sent successfully')
+      } catch (err: any) {
+        console.warn('sendRichMessage failed, trying parsed sendText fallback:', err?.message || err)
+      }
+    }
 
-      await tg.sendMedia(
-        chatId,
-        InputMedia.document(`file:${absPath}`, {
-          fileName,
+    if (!sent) {
+      const parsedText = html([htmlFormatted])
+      const sentMsg = await tg.sendText(chatId, parsedText, {
+        replyMarkup: keyboard,
+        disableWebPreview: true,
+      })
+      console.log('Text message sent successfully (ID:', sentMsg.id, ')')
+
+      // If separate media send needed:
+      if (apks.length > 0) {
+        const mediaGroup = apks.map(apk => InputMedia.document(`file:${resolve(apk)}`, {
+          fileName: basename(apk),
           fileMime: 'application/vnd.android.package-archive',
-        }),
-        {
-          replyTo: sentMsg.id,
-        },
-      )
-      console.log(`Successfully uploaded ${fileName}`)
+        }))
+        await tg.sendMediaGroup(chatId, mediaGroup, { replyTo: sentMsg.id })
+        console.log('Attached APK media group successfully')
+      }
     }
   } catch (err: any) {
-    console.error('Error during MTProto upload:', err?.message || err)
+    console.error('Error during Telegram upload:', err?.message || err)
     throw err
   } finally {
     await tg.destroy()
