@@ -117,10 +117,20 @@ done < <(head -n $max_commits <<<"$commits")
 # --- message & buttons
 text="$state <b><a href=\"$title_url\">$(html <<<"$title")</a></b>
 
-<b>Merged commits ($total)</b>
+<b>New commits ($total)</b>
 <blockquote expandable>${lines%$'\n'}</blockquote>
 
 $variant_tag"
+
+# Try upstream-style MTProto upload via @mtcute/node first (supports files > 50 MB)
+if command -v pnpm >/dev/null 2>&1 && [ -f "legacy/telegram-upload.ts" ] && [ -z "${DRY_RUN:-}" ]; then
+  echo "Attempting upload via @mtcute/node (MTProto, upstream style)..."
+  if pnpm exec tsx legacy/telegram-upload.ts; then
+    echo "Posted to Telegram via MTProto"
+    exit 0
+  fi
+  echo "::warning::MTProto upload failed, falling back to HTTP Bot API..."
+fi
 
 reply_markup=$(jq -nc \
   --arg b1_text "$btn1_text" \

@@ -297,7 +297,17 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: download build apks
+        if: hashFiles('apks/**/*.apk') == ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: legacy-*
@@ -307,7 +317,10 @@ jobs:
       - name: post to telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID || '-1004364828439' }}
+          MTPROTO_SESSION: ${{ secrets.MTPROTO_SESSION }}
           GH_TOKEN: ${{ github.token }}
           BASE_SHA: ${{ inputs.base_sha || (github.event_name == 'push' && github.event.before) || '' }}
           RELEASE_REQUESTED: ${{ inputs.release || inputs.release_tag != '' }}
