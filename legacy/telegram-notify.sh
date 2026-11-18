@@ -138,12 +138,21 @@ reply_markup=$(jq -nc \
   --arg s_url "$source_url" \
   '{inline_keyboard: [[{text: $b1_text, url: $b1_url}, {text: "📦 Source Code", url: $s_url}]]}')
 
+is_apk_signed() {
+  local apk="$1"
+  unzip -l "$apk" 'META-INF/*' 2>/dev/null | grep -Eq 'META-INF/.*\.(RSA|DSA|EC)'
+}
+
 apk_dir="${APK_DIR:-apks}"
 apks=()
-if [ -d "$apk_dir/legacy-signed" ] && [ -n "$(find "$apk_dir/legacy-signed" -name '*.apk' 2>/dev/null)" ]; then
-  mapfile -t apks < <(find "$apk_dir/legacy-signed" -name '*.apk' | sort)
-elif [ -d "$apk_dir" ]; then
-  mapfile -t apks < <(find "$apk_dir" -name '*.apk' | sort)
+if [ -d "$apk_dir" ]; then
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" == *unsigned* ]] && continue
+    if is_apk_signed "$f"; then
+      apks+=("$f")
+    fi
+  done < <(find "$apk_dir" -name '*.apk' 2>/dev/null | sort)
 fi
 
 if [ -n "${DRY_RUN:-}" ]; then

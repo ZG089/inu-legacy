@@ -4,6 +4,15 @@ import { execSync } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { basename, join, resolve } from 'node:path'
 
+function isApkSigned(apkPath: string): boolean {
+  try {
+    const list = execSync(`unzip -l "${apkPath}" 'META-INF/*'`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] })
+    return /META-INF\/.*\.(RSA|DSA|EC)/i.test(list)
+  } catch {
+    return false
+  }
+}
+
 async function findApks(searchDirs: string[]): Promise<string[]> {
   for (const dir of searchDirs) {
     try {
@@ -11,13 +20,15 @@ async function findApks(searchDirs: string[]): Promise<string[]> {
       if (!stat.isDirectory()) continue
       const entries = await fs.readdir(dir, { recursive: true })
       const apks = entries
-        .filter(f => f.endsWith('.apk'))
+        .filter(f => f.endsWith('.apk') && !f.includes('unsigned'))
         .map(f => join(dir, f))
       if (apks.length === 0) continue
 
-      // If signed apks exist, prefer them
-      const signed = apks.filter(f => f.includes('signed'))
-      return signed.length > 0 ? signed : apks
+      // Only accept genuinely signed APKs; never return unsigned APKs
+      const signed = apks.filter(apk => isApkSigned(apk))
+      if (signed.length > 0) {
+        return signed
+      }
     } catch {
       // dir doesn't exist, try next
     }
