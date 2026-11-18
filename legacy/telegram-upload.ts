@@ -36,7 +36,11 @@ async function findApks(searchDirs: string[]): Promise<string[]> {
   return []
 }
 
-function getCommits(baseSha: string, headSha: string, maxCommits = 25, maxSubject = 80): { lines: string[], total: number } {
+function getCommits(baseSha: string, headSha: string, repoUrl: string, maxCommits = 25, maxSubject = 80): {
+  markdownLines: string[]
+  htmlLines: string[]
+  total: number
+} {
   let logOutput = ''
   try {
     if (baseSha && /^[0-9a-f]{40}$/.test(baseSha)) {
@@ -56,7 +60,8 @@ function getCommits(baseSha: string, headSha: string, maxCommits = 25, maxSubjec
 
   const rawLines = logOutput.split('\n').filter(Boolean)
   const total = rawLines.length
-  const lines: string[] = []
+  const markdownLines: string[] = []
+  const htmlLines: string[] = []
 
   for (const line of rawLines.slice(0, maxCommits)) {
     const [h, ...rest] = line.split('\t')
@@ -64,14 +69,17 @@ function getCommits(baseSha: string, headSha: string, maxCommits = 25, maxSubjec
     if (s.length > maxSubject) {
       s = s.slice(0, maxSubject - 1) + '…'
     }
-    lines.push(`- ${h} • ${s}`)
+    const commitUrl = `${repoUrl}/commit/${h}`
+    markdownLines.push(`- [${h}](${commitUrl}) • ${s}`)
+    htmlLines.push(`- <a href="${commitUrl}">${h}</a> • ${html.escape(s)}`)
   }
 
   if (total > maxCommits) {
-    lines.push(`- … and ${total - maxCommits} more`)
+    markdownLines.push(`- … and ${total - maxCommits} more`)
+    htmlLines.push(`- … and ${total - maxCommits} more`)
   }
 
-  return { lines, total }
+  return { markdownLines, htmlLines, total }
 }
 
 async function main() {
@@ -98,14 +106,46 @@ async function main() {
 
   const isSuccess = (signResult === 'success' || signResult === 'skipped') && (releaseResult === 'success' || releaseResult === 'skipped')
   const state = isSuccess ? (isRelease ? '🚀' : '✨') : '❌'
-  const variantTag = isRelease ? '#Release' : '#CI'
 
   const title = isRelease ? `Release ${releaseTag || 'Build'}` : `CI build #${runNumber}`
   const titleUrl = isRelease ? `${repoUrl}/releases/tag/${releaseTag}` : `${repoUrl}/actions/runs/${runId}`
   const sourceUrl = `${repoUrl}/tree/${sha}`
 
-  const { lines, total } = getCommits(baseSha, sha)
-  const commitsBlock = lines.join('\n')
+  let notes = ''
+  if (isRelease) {
+    const buildNumMatch = releaseTag.match(/-(\d+)-legacy$/) || releaseTag.match(/\.(\d+)$/) || releaseTag.match(/-(\d+)$/)
+    const buildNum = buildNumMatch ? buildNumMatch[1] : ''
+    if (buildNum) {
+      try {
+        notes = await fs.readFile(`changelogs/${buildNum}.md`, 'utf8')
+      } catch {
+        // file not found
+      }
+    }
+  }
+
+  const fullChangelog = baseSha && /^[0-9a-f]{40}$/.test(baseSha)
+    ? `[Full changelog: ${baseSha.slice(0, 7)}...${sha.slice(0, 7)}](${repoUrl}/compare/${baseSha}...${sha})`
+    : (isRelease ? `[Full changelog](${titleUrl})` : `[Full changelog](${repoUrl}/commits/${sha})`)
+
+  const { markdownLines, htmlLines, total } = getCommits(baseSha, sha, repoUrl)
+  const commitsMarkdown = markdownLines.join('\n')
+  const commitsHtml = htmlLines.join('<br>')
+
+  let contentBody = ''
+  let htmlBody = ''
+
+  if (isRelease && notes.trim()) {
+    // Release with changelog: show changelog only, no commits
+    contentBody = `<details><summary>Changelog</summary>\n\n${notes.trim()}\n\n${fullChangelog}\n</details>`
+    htmlBody = `<b>Changelog</b><br><blockquote expandable>${html.escape(notes.trim())}</blockquote>`
+  } else {
+    // CI build (or release without changelog): show hyperlinked commits only
+    contentBody = `<details><summary>New commits (${total})</summary>\n\n${commitsMarkdown}\n</details>`
+    htmlBody = `<b>New commits (${total})</b><br><blockquote expandable>${commitsHtml}</blockquote>`
+  }
+
+  const variantTag = isRelease ? `#release ${releaseTag || 'v' + runNumber}` : '#CI'
 
   const btn1Text = isRelease ? '🏷️ Release Tag' : '🔍 View CI run'
   const btn1Url = isRelease ? titleUrl : `${repoUrl}/actions/runs/${runId}`
@@ -145,12 +185,12 @@ async function main() {
   const richContent = [
     `## ${state} [${title}](${titleUrl})`,
     ...docMarkdownLines,
-    `<details><summary>New commits (${total})</summary>\n\n${commitsBlock}\n</details>`,
+    contentBody,
     `<footer>${variantTag}</footer>`,
   ].filter(Boolean).join('\n\n')
 
   // Plain HTML string for fallback with proper entity parsing
-  const htmlFormatted = `${state} <b><a href="${titleUrl}">${html.escape(title)}</a></b><br><br><b>New commits (${total})</b><br><blockquote expandable>${html.escape(commitsBlock)}</blockquote><br><br>${variantTag}`
+  const htmlFormatted = `${state} <b><a href="${titleUrl}">${html.escape(title)}</a></b><br><br>${htmlBody}<br><br>${variantTag}`
 
   if (process.env.DRY_RUN === '1') {
     console.log('\n[DRY RUN Rich Message]:\n' + richContent)

@@ -57,6 +57,13 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         items.add(UItem.asCustomShadow(getOrCreateLogoHeader()))
         items.add(
             UItem.asButton(
+                BUTTON_GITHUB_LEGACY,
+                LocaleController.getString(R.string.InuAboutLegacyFork),
+                "ZG089/inu-legacy",
+            )
+        )
+        items.add(
+            UItem.asButton(
                 BUTTON_GITHUB,
                 LocaleController.getString(R.string.InuAboutGitHub),
                 "teidesu/inugram",
@@ -149,6 +156,7 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         val ctx = context ?: return
         when (item.id) {
+            BUTTON_GITHUB_LEGACY -> Browser.openUrl(ctx, "https://github.com/ZG089/inu-legacy")
             BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/teidesu/inugram")
             BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/" + UpdateHelper.USERNAME)
             TOGGLE_UPDATES_ENABLED -> {
@@ -671,6 +679,7 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
     }
 
     companion object {
+        private val BUTTON_GITHUB_LEGACY = InuUtils.generateId()
         private val BUTTON_GITHUB = InuUtils.generateId()
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val TOGGLE_UPDATES_ENABLED = InuUtils.generateId()

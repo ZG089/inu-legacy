@@ -51,7 +51,7 @@ if [ -n "$release_tag" ]; then
   title="Release $release_tag"
   title_url="$url/releases/tag/$release_tag"
   release_url="$url/releases/tag/$release_tag"
-  variant_tag="#Release"
+  variant_tag="#release $release_tag"
   btn1_text="🏷️ Release Tag"
   btn1_url="$release_url"
 else
@@ -111,15 +111,31 @@ total=$(grep -c . <<<"$commits" || true)
 lines=''
 while IFS=$'\t' read -r h s; do
   [ ${#s} -le $max_subject ] || s="${s:0:$((max_subject - 1))}…"
-  lines+="- $h • $(html <<<"$s")"$'\n'
+  commit_url="$url/commit/$h"
+  lines+="- <a href=\"$commit_url\">$h</a> • $(html <<<"$s")"$'\n'
 done < <(head -n $max_commits <<<"$commits")
 [ "$total" -le $max_commits ] || lines+="- … and $((total - max_commits)) more"$'\n'
+
+body=''
+if [ -n "$release_tag" ]; then
+  build_num=$(echo "$release_tag" | sed -E 's/.*-([0-9]+)-legacy$/\1/; s/.*\.([0-9]+)$/\1/; s/.*-([0-9]+)$/\1/')
+  changelog_file="changelogs/${build_num}.md"
+  if [ -n "$build_num" ] && [ -f "$changelog_file" ] && [ -s "$changelog_file" ]; then
+    changelog_content=$(cat "$changelog_file")
+    body="<b>Changelog</b>
+<blockquote expandable>$(html <<<"$changelog_content")</blockquote>"
+  fi
+fi
+
+if [ -z "$body" ]; then
+  body="<b>New commits ($total)</b>
+<blockquote expandable>${lines%$'\n'}</blockquote>"
+fi
 
 # --- message & buttons
 text="$state <b><a href=\"$title_url\">$(html <<<"$title")</a></b>
 
-<b>New commits ($total)</b>
-<blockquote expandable>${lines%$'\n'}</blockquote>
+$body
 
 $variant_tag"
 

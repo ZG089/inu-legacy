@@ -82,6 +82,29 @@ jobs:
           fi
           git push origin main
 
+      - name: sync changelogs from upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_TAG: ${{ steps.check.outputs.upstream_tag }}
+        run: |
+          mkdir -p changelogs
+          git checkout upstream/main -- changelogs/ 2>/dev/null || true
+
+          if [ -n "$UPSTREAM_TAG" ]; then
+            build_num=$(echo "$UPSTREAM_TAG" | sed -E 's/.*-([0-9]+)$/\1/')
+            if [ -n "$build_num" ] && [ ! -s "changelogs/${build_num}.md" ]; then
+              echo "Fetching release notes for $UPSTREAM_TAG from teidesu/inugram..."
+              gh release view "$UPSTREAM_TAG" -R teidesu/inugram --json body --jq '.body // ""' > "changelogs/${build_num}.md" 2>/dev/null || true
+            fi
+          fi
+
+          if [ -n "$(git status --porcelain changelogs/)" ]; then
+            echo "Committing synced changelogs..."
+            git add changelogs/
+            git commit -m "sync: update changelogs from upstream [skip build]"
+            git push origin main
+          fi
+
       # exactly one run per sync: a release run already covers the merged commits, so a CI run next to
       # it would build the same thing and post it twice. The push above uses the workflow token, which
       # never starts legacy.yml's push trigger; replace it with a PAT and this step needs revisiting.

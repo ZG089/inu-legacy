@@ -32,8 +32,8 @@ import org.telegram.ui.LaunchActivity
 import java.lang.ref.WeakReference
 
 object UpdateHelper {
-    const val USERNAME = "InugramCI"
-    private const val CHANNEL_ID = 3968318575L
+    const val USERNAME = "inu_legacy"
+    private const val CHANNEL_ID = 4364828439L
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
@@ -69,7 +69,7 @@ object UpdateHelper {
         return "${getVersionInfoString()}\nBuilt on: ${BuildVars.BUILD_DATE}"
     }
 
-    private val APK_RE = Regex("^inugram-(.+)-(\\d+)-(full|pluginless)\\.apk$")
+    private val APK_RE = Regex("^inugram(?:-legacy)?-(.+?)-(\\d+)(?:-(pluginless|full))?(?:-armeabi-v7a)?\\.apk$")
     private val SHORT_SHA_RE = Regex("-([0-9a-f]{7,40})$")
 
     @Volatile
@@ -611,7 +611,10 @@ object UpdateHelper {
     private fun extractApkInfo(msg: TLRPC.Message, variant: String): ApkInfo? {
         val (match, doc) = msg.rich_message?.documents.orEmpty().firstNotNullOfOrNull { doc ->
             APK_RE.matchEntire(FileLoader.getDocumentFileName(doc))
-                ?.takeIf { it.groupValues[3] == variant }
+                ?.takeIf {
+                    val apkVariant = if (it.groupValues[3] == "pluginless") "pluginless" else "full"
+                    apkVariant == variant
+                }
                 ?.let { it to doc }
         } ?: return null
         val verName = match.groupValues[1]

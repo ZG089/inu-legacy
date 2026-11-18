@@ -278,6 +278,12 @@ jobs:
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
+          notes=(--generate-notes)
+          build_num=$(echo "$tag" | sed -E 's/.*-([0-9]+)-legacy$/\1/; s/.*\.([0-9]+)$/\1/; s/.*-([0-9]+)$/\1/')
+          if [ -n "$build_num" ] && [ -f "changelogs/${build_num}.md" ] && [ -s "changelogs/${build_num}.md" ]; then
+            notes=(--notes-file "changelogs/${build_num}.md")
+          fi
+
           if target=$(gh release view "$tag" --json targetCommitish --jq .targetCommitish 2>/dev/null); then
             if [ "$target" != "$GITHUB_SHA" ]; then
               echo "::error::release $tag already exists for $target; re-run the run that created it instead"
@@ -285,7 +291,7 @@ jobs:
             fi
             gh release upload "$tag" signed/*.apk --clobber
           else
-            gh release create "$tag" signed/*.apk --target "$GITHUB_SHA" --title "$tag" --generate-notes
+            gh release create "$tag" signed/*.apk --target "$GITHUB_SHA" --title "$tag" "${notes[@]}"
           fi
 
   # one message per run, whatever happened; a cancelled run (superseded by a newer one) stays quiet

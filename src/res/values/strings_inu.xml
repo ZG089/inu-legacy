@@ -600,6 +600,7 @@
     <string name="InuJumpToBeginning">Jump to the beginning</string>
 
     <string name="InuAbout">About</string>
+    <string name="InuAboutLegacyFork">Legacy Fork</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Updates channel</string>
     <string name="InuUpdates">Updates</string>
