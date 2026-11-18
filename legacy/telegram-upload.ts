@@ -90,12 +90,13 @@ async function main() {
   const repoUrl = `${serverUrl}/${repo}`
 
   const baseSha = process.env.BASE_SHA || ''
+  const signResult = process.env.SIGN_RESULT || 'success'
   const releaseRequested = process.env.RELEASE_REQUESTED === 'true'
   const releaseResult = process.env.RELEASE_RESULT || 'skipped'
   const releaseTag = process.env.RELEASE_TAG || ''
   const isRelease = releaseRequested || Boolean(releaseTag)
 
-  const isSuccess = releaseResult === 'success' || releaseResult === 'skipped'
+  const isSuccess = (signResult === 'success' || signResult === 'skipped') && (releaseResult === 'success' || releaseResult === 'skipped')
   const state = isSuccess ? (isRelease ? '🚀' : '✨') : '❌'
   const variantTag = isRelease ? '#Release' : '#CI'
 

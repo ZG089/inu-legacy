@@ -42,6 +42,7 @@ status() { # job name -> status word
 
 plugin=$(status 'build (full)')
 pluginless=$(status 'build (pluginless)')
+sign_status=$(status 'sign')
 
 api_url=${TELEGRAM_API_URL:-https://api.telegram.org}
 
@@ -74,7 +75,7 @@ else
   release_line=''
 fi
 
-all="$plugin $pluginless $release_line"
+all="$plugin $pluginless $sign_status $release_line"
 if [[ $all == *❌* || $all == *failed* ]]; then
   state='❌'
 elif [[ $all == *❔* || $all == *⏹* || $all == *⏭* || $all == *cancelled* || $all == *not\ run* ]]; then

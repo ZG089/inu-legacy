@@ -192,16 +192,11 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  release:
+  sign:
     needs: build
-    if: github.ref == 'refs/heads/main' && (inputs.release || inputs.release_tag != '')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: write
-      actions: write
-    outputs:
-      tag: ${{ steps.publish.outputs.tag }}
+    timeout-minutes: 15
     steps:
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
@@ -245,6 +240,30 @@ jobs:
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
 
+      - name: upload signed apks
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: legacy-signed
+          path: signed/*.apk
+          retention-days: 1
+
+  release:
+    needs: sign
+    if: github.ref == 'refs/heads/main' && (inputs.release || inputs.release_tag != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: write
+    outputs:
+      tag: ${{ steps.publish.outputs.tag }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: legacy-signed
+          path: signed
+
       - name: publish release
         id: publish
         env:
@@ -269,17 +288,9 @@ jobs:
             gh release create "$tag" signed/*.apk --target "$GITHUB_SHA" --title "$tag" --generate-notes
           fi
 
-      - name: upload signed apks
-        if: success()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: legacy-signed
-          path: signed/*.apk
-          retention-days: 1
-
   # one message per run, whatever happened; a cancelled run (superseded by a newer one) stays quiet
   notify:
-    needs: [build, release]
+    needs: [build, sign, release]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -306,7 +317,8 @@ jobs:
         if: hashFiles('apks/**/*.apk') == ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          pattern: legacy-signed
+          pattern: legacy-signed*
+          merge-multiple: true
           path: apks
         continue-on-error: true
 
@@ -320,6 +332,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BASE_SHA: ${{ inputs.base_sha || (github.event_name == 'push' && github.event.before) || '' }}
           RELEASE_REQUESTED: ${{ inputs.release || inputs.release_tag != '' }}
+          SIGN_RESULT: ${{ needs.sign.result }}
           RELEASE_RESULT: ${{ needs.release.result }}
           RELEASE_TAG: ${{ needs.release.outputs.tag }}
           APK_DIR: apks
