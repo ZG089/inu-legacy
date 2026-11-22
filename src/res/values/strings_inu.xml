@@ -608,6 +608,9 @@
     <string name="InuAboutChannel">Updates channel</string>
     <string name="InuUpdates">Updates</string>
     <string name="InuUpdatesEnabled">Check for updates automatically</string>
+    <string name="InuUpdateChannel">Update channel</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">Releases</string>
     <string name="InuUpdateCheckNow">Check now</string>
     <string name="InuUpdateBuildFullInfo">You are on the full build. **Switch to pluginless >**</string>
     <string name="InuUpdateBuildPluginlessInfo">You are on the pluginless build. **Switch to full >**</string>

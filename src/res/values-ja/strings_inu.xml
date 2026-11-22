@@ -495,6 +495,9 @@
     <string name="InuAboutChannel">更新チャンネル</string>
     <string name="InuUpdates">アップデート</string>
     <string name="InuUpdatesEnabled">アップデートを自動確認</string>
+    <string name="InuUpdateChannel">更新チャンネル</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">リリース</string>
     <string name="InuUpdateCheckNow">今すぐ確認</string>
     <string name="InuUpdateBuildFullInfo">完全版を使用しています。**プラグインなし版に切り替える >**</string>
     <string name="InuUpdateBuildPluginlessInfo">プラグインなし版を使用しています。**完全版に切り替える >**</string>

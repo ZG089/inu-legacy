@@ -494,6 +494,9 @@
     <string name="InuAboutChannel">更新频道</string>
     <string name="InuUpdates">更新</string>
     <string name="InuUpdatesEnabled">自动检查更新</string>
+    <string name="InuUpdateChannel">更新通道</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">正式发布 (Releases)</string>
     <string name="InuUpdateCheckNow">立即检查</string>
     <string name="InuUpdateBuildFullInfo">当前使用完整版本。**切换到无插件版本 >**</string>
     <string name="InuUpdateBuildPluginlessInfo">当前使用无插件版本。**切换到完整版本 >**</string>

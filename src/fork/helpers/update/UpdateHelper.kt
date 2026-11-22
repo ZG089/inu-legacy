@@ -326,20 +326,22 @@ object UpdateHelper {
         }
     }
 
-    private fun searchReleases(
+    private fun searchChannelMessages(
         account: Int,
+        username: String,
+        query: String,
         limit: Int,
         callback: (messages: List<TLRPC.Message>?, error: String?) -> Unit,
     ) {
         val mc = MessagesController.getInstance(account)
-        mc.userNameResolver.resolve(USERNAME) { id ->
+        mc.userNameResolver.resolve(username) { id ->
             if (id == null || id == 0L || id == Long.MAX_VALUE) {
                 AndroidUtilities.runOnUIThread { callback(null, "resolve failed") }
                 return@resolve
             }
             val req = TLRPC.TL_messages_search().apply {
                 peer = mc.getInputPeer(id)
-                q = "#release"
+                q = query
                 filter = TLRPC.TL_inputMessagesFilterEmpty()
                 this.limit = limit
             }
@@ -348,9 +350,52 @@ object UpdateHelper {
                     if (err != null || resp !is TLRPC.messages_Messages) {
                         callback(null, err?.text ?: "no response")
                     } else {
-                        callback(resp.messages.filter { it.rich_message != null }.sortedByDescending { it.id }, null)
+                        callback(resp.messages.filter { it.rich_message != null }, null)
                     }
                 }
+            }
+        }
+    }
+
+    private fun searchReleases(
+        account: Int,
+        limit: Int,
+        callback: (messages: List<TLRPC.Message>?, error: String?) -> Unit,
+    ) {
+        val channel = InuConfig.UPDATE_CHANNEL.value
+        if (channel == InuConfig.UpdateChannelItem.CHANNEL_RELEASE) {
+            searchChannelMessages(account, USERNAME, "#release", limit) { messages, error ->
+                callback(messages?.sortedByDescending { it.id }, error)
+            }
+        } else {
+            // CI channel: search both #CI and #release to find the newest build
+            var ciMessages: List<TLRPC.Message>? = null
+            var releaseMessages: List<TLRPC.Message>? = null
+            var ciError: String? = null
+            var releaseError: String? = null
+            var pending = 2
+
+            fun onDone() {
+                if (--pending > 0) return
+                if (ciMessages == null && releaseMessages == null) {
+                    callback(null, ciError ?: releaseError ?: "no response")
+                    return
+                }
+                val all = (ciMessages.orEmpty() + releaseMessages.orEmpty())
+                    .distinctBy { it.id }
+                    .sortedByDescending { it.id }
+                callback(all, null)
+            }
+
+            searchChannelMessages(account, USERNAME, "#CI", limit) { msgs, err ->
+                ciMessages = msgs
+                ciError = err
+                onDone()
+            }
+            searchChannelMessages(account, USERNAME, "#release", limit) { msgs, err ->
+                releaseMessages = msgs
+                releaseError = err
+                onDone()
             }
         }
     }
@@ -359,6 +404,7 @@ object UpdateHelper {
         account: Int,
         username: String,
         channelId: Long,
+        query: String = "#release",
         limit: Int,
         callback: (List<Release>?) -> Unit,
     ) {
@@ -371,7 +417,7 @@ object UpdateHelper {
             val resolvedChannelId = if (id < 0) -id else id
             val req = TLRPC.TL_messages_search().apply {
                 peer = mc.getInputPeer(id)
-                q = "#release"
+                q = query
                 filter = TLRPC.TL_inputMessagesFilterEmpty()
                 this.limit = limit
             }
@@ -437,12 +483,35 @@ object UpdateHelper {
             callback(combined)
         }
 
-        searchChannelReleases(account, USERNAME, CHANNEL_ID, limit) { res ->
-            forkReleases = res
-            onDone()
+        val channel = InuConfig.UPDATE_CHANNEL.value
+        if (channel == InuConfig.UpdateChannelItem.CHANNEL_RELEASE) {
+            searchChannelReleases(account, USERNAME, CHANNEL_ID, "#release", limit) { res ->
+                forkReleases = res
+                onDone()
+            }
+        } else {
+            var ciReleases: List<Release>? = null
+            var releaseReleases: List<Release>? = null
+            var forkPending = 2
+            fun onForkDone() {
+                if (--forkPending > 0) return
+                val combined = (ciReleases.orEmpty() + releaseReleases.orEmpty())
+                    .distinctBy { it.verCode }
+                    .sortedByDescending { it.verCode }
+                forkReleases = combined
+                onDone()
+            }
+            searchChannelReleases(account, USERNAME, CHANNEL_ID, "#CI", limit) { res ->
+                ciReleases = res
+                onForkDone()
+            }
+            searchChannelReleases(account, USERNAME, CHANNEL_ID, "#release", limit) { res ->
+                releaseReleases = res
+                onForkDone()
+            }
         }
 
-        searchChannelReleases(account, UPSTREAM_USERNAME, UPSTREAM_CHANNEL_ID, limit) { res ->
+        searchChannelReleases(account, UPSTREAM_USERNAME, UPSTREAM_CHANNEL_ID, "#release", limit) { res ->
             upstreamReleases = res
             onDone()
         }
@@ -980,6 +1049,17 @@ object UpdateHelper {
         if (BuildConfig.INU_BUILD_TYPE == "debug") return
         if (msg.peer_id?.channel_id != CHANNEL_ID) return
         val rich = msg.rich_message ?: return
+        if (InuConfig.UPDATE_CHANNEL.value == InuConfig.UpdateChannelItem.CHANNEL_RELEASE) {
+            val text = msg.message.orEmpty()
+            val isRelease = text.contains("#release", ignoreCase = true) ||
+                rich.blocks.orEmpty().any { block ->
+                    when (block) {
+                        is TL_iv.pageBlockParagraph -> RichMessageLayout.getString(block.text).contains("#release", ignoreCase = true)
+                        else -> false
+                    }
+                }
+            if (!isRelease) return
+        }
         fun onLoaded(full: TLRPC.Message?) {
             val variant = currentVariant()
             val info = full?.let { extractApkInfo(it, variant) } ?: return

@@ -608,6 +608,9 @@
     <string name="InuAboutChannel">Güncelleme kanalı</string>
     <string name="InuUpdates">Güncellemeler</string>
     <string name="InuUpdatesEnabled">Güncellemeleri otomatik denetle</string>
+    <string name="InuUpdateChannel">Güncelleme kanalı</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">Sürümler</string>
     <string name="InuUpdateCheckNow">Şimdi denetle</string>
     <string name="InuUpdateBuildFullInfo">Tam sürümü kullanıyorsunuz. **Eklentisiz sürüme geç >**</string>
     <string name="InuUpdateBuildPluginlessInfo">Eklentisiz sürümü kullanıyorsunuz. **Tam sürüme geç >**</string>

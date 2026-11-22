@@ -87,6 +87,16 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         )
         items.add(
             UItem.asButton(
+                BUTTON_UPDATE_CHANNEL,
+                LocaleController.getString(R.string.InuUpdateChannel),
+                when (InuConfig.UPDATE_CHANNEL.value) {
+                    InuConfig.UpdateChannelItem.CHANNEL_RELEASE -> LocaleController.getString(R.string.InuUpdateChannelRelease)
+                    else -> LocaleController.getString(R.string.InuUpdateChannelCI)
+                }
+            )
+        )
+        items.add(
+            UItem.asButton(
                 BUTTON_CHECK_NOW,
                 LocaleController.getString(R.string.InuUpdateCheckNow),
             )
@@ -163,6 +173,20 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
                 val new = InuConfig.UPDATES_ENABLED.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 if (!new) UpdateHelper.clearPending()
+            }
+
+            BUTTON_UPDATE_CHANNEL -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuUpdateChannelCI),
+                    LocaleController.getString(R.string.InuUpdateChannelRelease),
+                ),
+                InuConfig.UPDATE_CHANNEL.value,
+            ) { which ->
+                if (InuConfig.UPDATE_CHANNEL.value != which) {
+                    InuConfig.UPDATE_CHANNEL.value = which
+                    UpdateHelper.clearPending()
+                }
             }
 
             BUTTON_CHECK_NOW -> runManualCheck()
@@ -683,6 +707,7 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         private val BUTTON_GITHUB = InuUtils.generateId()
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val TOGGLE_UPDATES_ENABLED = InuUtils.generateId()
+        private val BUTTON_UPDATE_CHANNEL = InuUtils.generateId()
         private val BUTTON_CHECK_NOW = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val TOGGLE_EXTRA_DEBUG_LOGS = InuUtils.generateId()

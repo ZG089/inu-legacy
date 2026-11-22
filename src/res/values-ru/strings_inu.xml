@@ -497,6 +497,9 @@
     <string name="InuAboutChannel">Канал обновлений</string>
     <string name="InuUpdates">Обновления</string>
     <string name="InuUpdatesEnabled">Автоматически проверять обновления</string>
+    <string name="InuUpdateChannel">Канал обновлений</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">Релизы</string>
     <string name="InuUpdateCheckNow">Проверить сейчас</string>
     <string name="InuUpdateBuildFullInfo">Вы используете полную сборку. **Переключиться на сборку без плагинов >**</string>
     <string name="InuUpdateBuildPluginlessInfo">Вы используете сборку без плагинов. **Переключиться на полную >**</string>

@@ -942,6 +942,16 @@ object InuConfig {
     @JvmField
     val UPDATES_ENABLED = UpdatesEnabledItem()
 
+    class UpdateChannelItem : IntItem("update_channel", CHANNEL_CI) {
+        companion object {
+            const val CHANNEL_CI = 0
+            const val CHANNEL_RELEASE = 1
+        }
+    }
+
+    @JvmField
+    val UPDATE_CHANNEL = UpdateChannelItem()
+
     @JvmField
     val WHATS_NEW_ON_UPDATE = BoolItem("whats_new_on_update", true)
 

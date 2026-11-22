@@ -584,6 +584,9 @@
     <string name="InuAboutChannel">Канал оновлень</string>
     <string name="InuUpdates">Оновлення</string>
     <string name="InuUpdatesEnabled">Автоматично перевіряти оновлення</string>
+    <string name="InuUpdateChannel">Канал оновлень</string>
+    <string name="InuUpdateChannelCI">CI</string>
+    <string name="InuUpdateChannelRelease">Релізи</string>
     <string name="InuUpdateCheckNow">Перевірити зараз</string>
     <string name="InuUpdateBuildFullInfo">Ви використовуєте повну збірку. **Перейти на збірку без плагінів >**</string>
     <string name="InuUpdateBuildPluginlessInfo">Ви використовуєте збірку без плагінів. **Перейти на повну >**</string>
