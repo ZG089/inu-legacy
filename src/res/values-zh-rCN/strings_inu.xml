@@ -481,6 +481,7 @@
     <string name="InuShowPinnedPanel">显示置顶消息</string>
     <string name="InuShowFilteredMessages">显示隐藏的消息</string>
     <string name="InuHideFilteredMessages">隐藏已隐藏的消息</string>
+    <string name="InuAppIconInugram">Inugram</string>
     <string name="InuAppIconStock">原版</string>
     <string name="InuAppIconLicenseInugram">占位图标，欢迎提供更好的</string>
     <string name="InuAppIconLicenseTelegram">图标版权归 **Telegram** 所有。保留所有权利。</string>

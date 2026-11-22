@@ -161,13 +161,25 @@ function buildNotificationVector(shapes: SvgShape[], srcW: number, srcH: number)
   })
 }
 
-function buildAdaptiveIcon(foreground: string): string {
+function buildAdaptiveIcon(background: string, foreground: string): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/icon_background_inu" />
+    <background android:drawable="@drawable/${background}" />
     <foreground android:drawable="@drawable/${foreground}" />
     <monochrome android:drawable="@drawable/icon_plane_inu" />
 </adaptive-icon>
+`
+}
+
+function buildWhiteBackgroundVector(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="${ADAPTIVE_SIZE}dp"
+    android:height="${ADAPTIVE_SIZE}dp"
+    android:viewportWidth="${ADAPTIVE_SIZE}"
+    android:viewportHeight="${ADAPTIVE_SIZE}">
+    <path android:pathData="M0,0h${ADAPTIVE_SIZE}v${ADAPTIVE_SIZE}h-${ADAPTIVE_SIZE}z" android:fillColor="#FFFFFFFF" />
+</vector>
 `
 }
 
@@ -214,29 +226,44 @@ async function loadSvg(relPath: string): Promise<{ shapes: SvgShape[], srcW: num
   return { shapes: parseSvgBody(svg), srcW: Number(viewBox[1]), srcH: Number(viewBox[2]) }
 }
 
-const fg = await loadSvg('src/res/launcher/icon.svg')
+const fgDefault = await loadSvg('src/res/launcher/icon.svg')
+const fgInu = await loadSvg('src/res/launcher/icon-inugram.svg')
 const mono = await loadSvg('src/res/launcher/icon-mono.svg')
 
-const foreground = buildForegroundVector(fg.shapes, fg.srcW, fg.srcH, false)
-const foregroundDebug = buildForegroundVector(fg.shapes, fg.srcW, fg.srcH, false, true)
+const foregroundDefault = buildForegroundVector(fgDefault.shapes, fgDefault.srcW, fgDefault.srcH, false)
+const foregroundDefaultDebug = buildForegroundVector(fgDefault.shapes, fgDefault.srcW, fgDefault.srcH, false, true)
+
+const foregroundInu = buildForegroundVector(fgInu.shapes, fgInu.srcW, fgInu.srcH, false)
+const foregroundInuDebug = buildForegroundVector(fgInu.shapes, fgInu.srcW, fgInu.srcH, false, true)
+
 const monochrome = buildForegroundVector(mono.shapes, mono.srcW, mono.srcH, true)
 const settingsIcon = buildSettingsVector(mono.shapes, mono.srcW, mono.srcH)
 const notificationIcon = buildNotificationVector(mono.shapes, mono.srcW, mono.srcH)
-const background = buildBackgroundVector()
-const debugIcon = buildAdaptiveIcon('icon_foreground_inu_debug')
 
-// the *_inu drawables back stock @mipmap/ic_launcher{,_round} (rewired by
+const backgroundDefault = buildWhiteBackgroundVector()
+const backgroundInu = buildBackgroundVector()
+
+const debugDefaultIcon = buildAdaptiveIcon('icon_background_default', 'icon_foreground_default_debug')
+const debugInuIcon = buildAdaptiveIcon('icon_background_inu', 'icon_foreground_inu_debug')
+
+// the *_default and *_inu drawables back stock @mipmap/ic_launcher{,_round} (rewired by
 // misc__branding); the mipmap-debug wrappers override it for the debug build
 const targets: [string, string][] = [
-  [`${GEN_DRAWABLE}/icon_background_inu.xml`, background],
+  [`${GEN_DRAWABLE}/icon_background_default.xml`, backgroundDefault],
+  [`${GEN_DRAWABLE}/icon_foreground_default.xml`, foregroundDefault],
+  [`${GEN_DRAWABLE}/icon_foreground_default_round.xml`, foregroundDefault],
+  [`${GEN_DRAWABLE}/icon_foreground_default_debug.xml`, foregroundDefaultDebug],
+  [`${GEN_DRAWABLE}/icon_background_inu.xml`, backgroundInu],
+  [`${GEN_DRAWABLE}/icon_foreground_inu.xml`, foregroundInu],
+  [`${GEN_DRAWABLE}/icon_foreground_inu_round.xml`, foregroundInu],
+  [`${GEN_DRAWABLE}/icon_foreground_inu_debug.xml`, foregroundInuDebug],
   [`${GEN_DRAWABLE}/icon_plane_inu.xml`, monochrome],
-  [`${GEN_DRAWABLE}/icon_foreground_inu.xml`, foreground],
-  [`${GEN_DRAWABLE}/icon_foreground_inu_round.xml`, foreground],
-  [`${GEN_DRAWABLE}/icon_foreground_inu_debug.xml`, foregroundDebug],
   [`${GEN_DRAWABLE}/icon_settings_inu.xml`, settingsIcon],
   [`${GEN_DRAWABLE}/icon_notification_inu.xml`, notificationIcon],
-  [`${GEN_DEBUG_MIPMAP}/ic_launcher.xml`, debugIcon],
-  [`${GEN_DEBUG_MIPMAP}/ic_launcher_round.xml`, debugIcon],
+  [`${GEN_DEBUG_MIPMAP}/ic_launcher.xml`, debugDefaultIcon],
+  [`${GEN_DEBUG_MIPMAP}/ic_launcher_round.xml`, debugDefaultIcon],
+  [`${GEN_DEBUG_MIPMAP}/ic_launcher_inugram.xml`, debugInuIcon],
+  [`${GEN_DEBUG_MIPMAP}/ic_launcher_inugram_round.xml`, debugInuIcon],
 ]
 
 let dirty = false

@@ -232,7 +232,9 @@ export function hasGitRepo(repoDir: string) {
 export async function hasStgitStack(repoDir: string, branch: string) {
   // resolve via git: the stack ref may be packed in .git/packed-refs
   const result = await $({ cwd: repoDir, nothrow: true })`git show-ref --verify --quiet refs/stacks/${branch}`
-  return result.exitCode === 0
+  if (result.exitCode === 0) return true
+  const stgit2 = await $({ cwd: repoDir, nothrow: true })`git show-ref --verify --quiet refs/heads/${branch}.stgit`
+  return stgit2.exitCode === 0
 }
 
 export async function getCurrentBranch(repoDir: string) {

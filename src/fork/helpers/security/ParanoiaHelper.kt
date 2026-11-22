@@ -185,6 +185,7 @@ object ParanoiaHelper {
     fun filterLauncherIcons(icons: MutableList<LauncherIcon>) {
         if (isDisguised()) {
             icons.remove(LauncherIcon.DEFAULT)
+            icons.remove(LauncherIcon.INUGRAM)
             icons.remove(LauncherIcon.STOCK)
             val disguiseIdx = icons.indexOf(LauncherIcon.DISGUISE)
             if (disguiseIdx != -1) {

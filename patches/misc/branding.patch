@@ -4,34 +4,38 @@ Date: Fri, 13 Nov 2026 23:41:28 +0400
 Subject: change app name to Inugram
 
 ---
- TMessagesProj/src/main/AndroidManifest.xml    | 33 +++++++++++++++++++
+ TMessagesProj/src/main/AndroidManifest.xml    | 49 +++++++++++++++++++
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
- .../messenger/ContactsController.java         | 10 +++---
- .../telegram/messenger/LocaleController.java  | 15 +++++++--
- .../telegram/messenger/MediaController.java   | 22 ++++++-------
- .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
- .../telegram/ui/LauncherIconController.java   |  6 ++--
- .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
- .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
- .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
- .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
- .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
- .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
- .../ic_launcher_stock_round.xml               |  6 ++++
- .../src/main/res/values-de/strings.xml        |  4 +--
- .../src/main/res/values-es/strings.xml        |  6 ++--
- .../src/main/res/values-it/strings.xml        |  4 +--
+ .../messenger/ContactsController.java         | 10 ++--
+ .../telegram/messenger/LocaleController.java  | 15 ++++--
+ .../telegram/messenger/MediaController.java   | 22 ++++-----
+ .../java/org/telegram/ui/DialogsActivity.java |  6 ++-
+ .../telegram/ui/LauncherIconController.java   |  7 ++-
+ .../ui/Stories/DialogStoriesCell.java         | 23 ++++++---
+ .../java/org/telegram/ui/ThemeActivity.java   | 12 ++++-
+ .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 +-----
+ .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 +--
+ .../mipmap-anydpi-v26/ic_launcher_inugram.xml |  6 +++
+ .../ic_launcher_inugram_round.xml             |  6 +++
+ .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 +--
+ .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 +++
+ .../ic_launcher_stock_round.xml               |  6 +++
+ .../src/main/res/values-de/strings.xml        |  4 +-
+ .../src/main/res/values-es/strings.xml        |  6 +--
+ .../src/main/res/values-it/strings.xml        |  4 +-
  .../src/main/res/values-night/styles.xml      |  2 +-
  .../src/main/res/values-nl/strings.xml        |  2 +-
- .../src/main/res/values-pt-rBR/strings.xml    |  6 ++--
- .../src/main/res/values-ru/strings.xml        |  6 ++--
- .../src/main/res/values-uk/strings.xml        |  6 ++--
+ .../src/main/res/values-pt-rBR/strings.xml    |  6 +--
+ .../src/main/res/values-ru/strings.xml        |  6 +--
+ .../src/main/res/values-uk/strings.xml        |  6 +--
  .../src/main/res/values-v31/styles.xml        |  2 +-
- TMessagesProj/src/main/res/values/strings.xml | 10 +++---
+ TMessagesProj/src/main/res/values/strings.xml | 10 ++--
  TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
  .../src/main/res/xml/sync_contacts.xml        |  2 +-
- .../org/telegram/tasks/TelegramStringsTask.kt |  8 +++--
- 27 files changed, 148 insertions(+), 79 deletions(-)
+ .../org/telegram/tasks/TelegramStringsTask.kt |  8 ++-
+ 29 files changed, 177 insertions(+), 79 deletions(-)
+ create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram.xml
+ create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram_round.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -39,10 +43,26 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -126,6 +126,39 @@
+@@ -126,6 +126,55 @@
              <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
          </activity-alias>
  
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.InugramIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_inugram"
++            android:roundIcon="@mipmap/ic_launcher_inugram_round"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
++        </activity-alias>
++
 +        <activity-alias
 +            android:enabled="false"
 +            android:name="org.telegram.messenger.StockIcon"
@@ -284,7 +304,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3436,6 +3436,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3434,6 +3434,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                  statusDrawable.center = true;
@@ -292,7 +312,7 @@ index 0000000..0000000 100644
                  logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
                  logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
                  // a new drawable (also when the view is recreated after a theme switch made elsewhere): remember its tint, the
-@@ -3444,6 +3445,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3442,6 +3443,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
                  ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                  actionBar.setTitle(ssb, statusDrawable);
@@ -302,7 +322,7 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -14388,4 +14392,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14386,4 +14390,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          keys.add(Theme.key_actionBarDefaultSubmenuItem);
          keys.add(Theme.key_actionBarDefaultSubmenuBackground);
      }
@@ -313,12 +333,13 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-@@ -34,12 +34,14 @@ public class LauncherIconController {
+@@ -34,12 +34,15 @@ public class LauncherIconController {
      }
  
      public enum LauncherIcon {
 -        DEFAULT("DefaultIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconDefault),
-+        DEFAULT("DefaultIcon", R.drawable.icon_background_inu, R.drawable.icon_foreground_inu, R.string.AppIconDefault),
++        DEFAULT("DefaultIcon", R.drawable.icon_background_default, R.drawable.icon_foreground_default, R.string.AppIconDefault),
++        INUGRAM("InugramIcon", R.drawable.icon_background_inu, R.drawable.icon_foreground_inu, R.string.InuAppIconInugram),
 +        STOCK("StockIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.InuAppIconStock),
          VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
          AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
@@ -492,11 +513,35 @@ index 0000000..0000000 100644
 -    <background android:drawable="@drawable/icon_background" />
 -    <foreground android:drawable="@mipmap/icon_foreground" />
 -    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu" />
++    <background android:drawable="@drawable/icon_background_default" />
++    <foreground android:drawable="@drawable/icon_foreground_default" />
 +    <monochrome android:drawable="@drawable/icon_plane_inu" />
  </adaptive-icon>
 \ No newline at end of file
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram.xml
+new file mode 100644
+index 0000000..0000000
+--- /dev/null
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
++</adaptive-icon>
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram_round.xml
+new file mode 100644
+index 0000000..0000000
+--- /dev/null
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_inugram_round.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
++</adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
@@ -507,8 +552,8 @@ index 0000000..0000000 100644
 -    <background android:drawable="@drawable/icon_background_round" />
 -    <foreground android:drawable="@mipmap/icon_foreground_round" />
 -    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
++    <background android:drawable="@drawable/icon_background_default" />
++    <foreground android:drawable="@drawable/icon_foreground_default_round" />
 +    <monochrome android:drawable="@drawable/icon_plane_inu" />
  </adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
@@ -707,7 +752,7 @@ index 0000000..0000000 100644
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
-@@ -2770,8 +2770,8 @@
+@@ -2769,8 +2769,8 @@
      <string name="AuthAnotherClientUrl">This code can be used to allow someone to log in to your Telegram account.\n\nTo confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and scan the code.</string>
      <string name="QRCodePermissionNoCameraWithHint">**Telegram** needs camera access so that you can scan QR codes. Tap Settings -> Permissions, and turn **Camera** on.</string>
      <string name="SetProfilePhoto">Set Profile Photo</string>
@@ -718,7 +763,7 @@ index 0000000..0000000 100644
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
-@@ -4213,7 +4213,7 @@
+@@ -4212,7 +4212,7 @@
      <string name="ViewMessageStatistic">Message Statistic</string>
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->

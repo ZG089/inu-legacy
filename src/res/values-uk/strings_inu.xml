@@ -572,6 +572,7 @@
     <string name="InuShowPinnedPanel">Показувати закріплені повідомлення</string>
     <string name="InuShowFilteredMessages">Показати приховані повідомлення</string>
     <string name="InuHideFilteredMessages">Сховати приховані повідомлення</string>
+    <string name="InuAppIconInugram">Inugram</string>
     <string name="InuAppIconStock">Стандартний</string>
     <string name="InuAppIconLicenseInugram">Тимчасовий значок, можете запропонувати кращий</string>
     <string name="InuAppIconLicenseTelegram">Іконка від **Telegram**. Усі права захищено.</string>
