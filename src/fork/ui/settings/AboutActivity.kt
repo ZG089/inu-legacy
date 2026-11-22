@@ -639,8 +639,8 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         // system mask, which would otherwise force a circle/squircle shape regardless
         // of our outline clip. Negative inset scales the foreground glyph up beyond the
         // adaptive-icon safe zone; the outline clip trims the overflow.
-        val bg = ctx.getDrawable(R.drawable.icon_background_inu)
-        val fg = ctx.getDrawable(R.drawable.icon_foreground_inu)
+        val bg = ctx.getDrawable(R.drawable.icon_background_default)
+        val fg = ctx.getDrawable(R.drawable.icon_foreground_default)
         val layered = LayerDrawable(arrayOf(bg, fg))
         val fgOverscan = -dp(18f)
         layered.setLayerInset(1, fgOverscan, fgOverscan, fgOverscan, fgOverscan)

@@ -485,6 +485,8 @@
     <string name="InuShowFilteredMessages">Показать скрытые сообщения</string>
     <string name="InuHideFilteredMessages">Спрятать скрытые сообщения</string>
     <string name="InuAppIconInugram">Inugram</string>
+    <string name="InuChangelogFork">Изменения форка</string>
+    <string name="InuChangelogUpstream">Upstream</string>
     <string name="InuAppIconStock">Стандартная</string>
     <string name="InuAppIconLicenseInugram">Временная иконка, не стесняйтесь предложить лучше</string>
     <string name="InuAppIconLicenseTelegram">Иконка от **Telegram**. Все права защищены.</string>

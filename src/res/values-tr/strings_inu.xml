@@ -596,6 +596,8 @@
     <string name="InuShowFilteredMessages">Gizli mesajları göster</string>
     <string name="InuHideFilteredMessages">Gizli mesajları gizle</string>
     <string name="InuAppIconInugram">Inugram</string>
+    <string name="InuChangelogFork">Fork Değişiklikleri</string>
+    <string name="InuChangelogUpstream">Yukarı Akış</string>
     <string name="InuAppIconStock">Varsayılan</string>
     <string name="InuAppIconLicenseInugram">Yer tutucu simge, daha iyisini katkıda bulunmaktan çekinmeyin</string>
     <string name="InuAppIconLicenseTelegram">Simge **Telegram** tarafından yapılmıştır. Tüm hakları saklıdır.</string>

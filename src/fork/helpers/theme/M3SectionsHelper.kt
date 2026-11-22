@@ -434,6 +434,9 @@ object M3SectionsHelper {
     }
 
     private fun computeIconColors(topColor: Int, bottomColor: Int): Pair<Int, Int> {
+        if (topColor == -1 && bottomColor == -1) {
+            return 0xFFFFFFFF.toInt() to 0xFFD4A3FF.toInt()
+        }
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)

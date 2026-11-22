@@ -483,6 +483,8 @@
     <string name="InuShowFilteredMessages">非表示のメッセージを表示</string>
     <string name="InuHideFilteredMessages">非表示のメッセージを隠す</string>
     <string name="InuAppIconInugram">Inugram</string>
+    <string name="InuChangelogFork">フォークの変更</string>
+    <string name="InuChangelogUpstream">上流の変更</string>
     <string name="InuAppIconStock">標準</string>
     <string name="InuAppIconLicenseInugram">仮アイコンです。より良いものを提供していただけたら嬉しいです</string>
     <string name="InuAppIconLicenseTelegram">**Telegram** によるアイコン。All rights reserved.</string>

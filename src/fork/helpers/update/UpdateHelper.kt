@@ -23,17 +23,25 @@ import org.telegram.messenger.R
 import org.telegram.messenger.RichMessageLayout
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
+import org.telegram.messenger.Utilities
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_iv
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.LaunchActivity
+import org.json.JSONArray
 import java.lang.ref.WeakReference
+import java.net.HttpURLConnection
+import java.net.URI
 
 object UpdateHelper {
     const val USERNAME = "inu_legacy"
     private const val CHANNEL_ID = 4364828439L
+    const val UPSTREAM_USERNAME = "InugramCI"
+    private const val UPSTREAM_CHANNEL_ID = 3968318575L
+    private const val GITHUB_REPO_FORK = "ZG089/inu-legacy"
+    private const val GITHUB_REPO_UPSTREAM = "teidesu/inugram"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
@@ -347,6 +355,60 @@ object UpdateHelper {
         }
     }
 
+    private fun searchChannelReleases(
+        account: Int,
+        username: String,
+        channelId: Long,
+        limit: Int,
+        callback: (List<Release>?) -> Unit,
+    ) {
+        val mc = MessagesController.getInstance(account)
+        mc.userNameResolver.resolve(username) { id ->
+            if (id == null || id == 0L || id == Long.MAX_VALUE) {
+                AndroidUtilities.runOnUIThread { callback(null) }
+                return@resolve
+            }
+            val resolvedChannelId = if (id < 0) -id else id
+            val req = TLRPC.TL_messages_search().apply {
+                peer = mc.getInputPeer(id)
+                q = "#release"
+                filter = TLRPC.TL_inputMessagesFilterEmpty()
+                this.limit = limit
+            }
+            ConnectionsManager.getInstance(account).sendRequest(req) { resp, err ->
+                AndroidUtilities.runOnUIThread {
+                    if (err != null || resp !is TLRPC.messages_Messages) {
+                        callback(null)
+                        return@runOnUIThread
+                    }
+                    val messages = resp.messages.filter { it.rich_message != null }.sortedByDescending { it.id }
+                    if (messages.isEmpty()) {
+                        callback(emptyList())
+                        return@runOnUIThread
+                    }
+                    val variant = currentVariant()
+                    val loaded = arrayOfNulls<TLRPC.Message>(messages.size)
+                    var pending = messages.size
+                    fun onLoaded(index: Int, msg: TLRPC.Message?) {
+                        loaded[index] = msg
+                        if (--pending > 0) return
+                        val releases = loaded.mapNotNull { full ->
+                            full?.let { createRelease(it, variant) }
+                        }
+                        callback(releases)
+                    }
+                    messages.forEachIndexed { index, msg ->
+                        if (msg.rich_message?.part == true) {
+                            loadRichMessage(account, msg.id, resolvedChannelId) { onLoaded(index, it) }
+                        } else {
+                            onLoaded(index, msg)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // ponytail: no pagination, the newest `limit` releases are all anyone gets to see
     fun loadReleases(
         limit: Int,
@@ -355,37 +417,368 @@ object UpdateHelper {
     ) {
         val account = UserConfig.selectedAccount
         if (!UserConfig.getInstance(account).isClientActivated) {
-            callback(null)
+            loadReleasesFromGitHub(limit, versions, callback)
             return
         }
-        searchReleases(account, limit) { messages, _ ->
-            if (messages == null) {
-                callback(null)
-                return@searchReleases
+
+        var forkReleases: List<Release>? = null
+        var upstreamReleases: List<Release>? = null
+        var pending = 2
+
+        fun onDone() {
+            if (--pending > 0) return
+            val fork = forkReleases.orEmpty()
+            val upstream = upstreamReleases.orEmpty()
+            if (fork.isEmpty() && upstream.isEmpty()) {
+                loadReleasesFromGitHub(limit, versions, callback)
+                return
             }
-            val variant = currentVariant()
-            val loaded = arrayOfNulls<TLRPC.Message>(messages.size)
-            var pending = messages.size
-            if (pending == 0) callback(emptyList())
-            fun onLoaded(index: Int, msg: TLRPC.Message?) {
-                loaded[index] = msg
-                if (--pending > 0) return
-                callback(loaded.mapNotNull { full -> full?.let { createRelease(it, variant) }?.takeIf { it.verCode in versions } })
-            }
-            messages.forEachIndexed { index, msg ->
-                if (msg.rich_message.part) loadRichMessage(account, msg.id) { onLoaded(index, it) }
-                else onLoaded(index, msg)
-            }
+            val combined = combineReleases(fork, upstream).filter { it.verCode in versions }
+            callback(combined)
+        }
+
+        searchChannelReleases(account, USERNAME, CHANNEL_ID, limit) { res ->
+            forkReleases = res
+            onDone()
+        }
+
+        searchChannelReleases(account, UPSTREAM_USERNAME, UPSTREAM_CHANNEL_ID, limit) { res ->
+            upstreamReleases = res
+            onDone()
         }
     }
 
     private fun createRelease(msg: TLRPC.Message, variant: String): Release? {
-        val info = extractApkInfo(msg, variant) ?: return null
+        val info = extractApkInfo(msg, variant)
+        val verCode = info?.verCode ?: extractVersionFromMessage(msg) ?: return null
         val changelog = extractChangelog(msg, variant)
-        changelog.blocks.add(0, TL_iv.pageBlockHeading1().apply {
-            text = TL_iv.textPlain().apply { text = "v${info.verCode}" }
-        })
-        return Release(info.verCode, changelog)
+        return Release(verCode, changelog)
+    }
+
+    private fun extractVersionFromMessage(msg: TLRPC.Message): Int? {
+        val text = msg.message.orEmpty()
+        val reTag = Regex("""#release\s+(?:v)?(\d+)""", RegexOption.IGNORE_CASE)
+        reTag.find(text)?.groupValues?.get(1)?.toIntOrNull()?.let { return it }
+        val reVer = Regex("""v(?:13\.\d+\.\d+(?:\.\d+)?-)?(\d+)""", RegexOption.IGNORE_CASE)
+        reVer.find(text)?.groupValues?.get(1)?.toIntOrNull()?.let { return it }
+        val richHeading = msg.rich_message?.blocks.orEmpty().filterIsInstance<TL_iv.pageBlockHeading1>().firstOrNull()
+        if (richHeading != null) {
+            val hText = RichMessageLayout.getString(richHeading.text)
+            Regex("""\b(\d+)\b""").find(hText)?.groupValues?.get(1)?.toIntOrNull()?.let { return it }
+        }
+        return null
+    }
+
+    internal class Deduplicator {
+        private val hashes = mutableSetOf<String>()
+        private val messages = mutableSetOf<String>()
+        private val rawTexts = mutableSetOf<String>()
+
+        fun record(text: String) {
+            if (text.isBlank()) return
+            rawTexts.add(text.trim().lowercase())
+            val hashRegex = Regex("""\b([0-9a-f]{7,40})\b""", RegexOption.IGNORE_CASE)
+            for (m in hashRegex.findAll(text)) {
+                hashes.add(m.value.lowercase())
+            }
+            val norm = normalize(text)
+            if (norm.isNotBlank()) messages.add(norm)
+        }
+
+        fun isDuplicate(text: String): Boolean {
+            if (text.isBlank()) return false
+            val trimmed = text.trim().lowercase()
+            if (rawTexts.contains(trimmed)) return true
+            val hashRegex = Regex("""\b([0-9a-f]{7,40})\b""", RegexOption.IGNORE_CASE)
+            val foundHashes = hashRegex.findAll(text).map { it.value.lowercase() }.toList()
+            if (foundHashes.isNotEmpty() && foundHashes.any { hashes.contains(it) }) return true
+            val norm = normalize(text)
+            if (norm.isNotBlank() && messages.contains(norm)) return true
+            return false
+        }
+
+        private fun normalize(text: String): String {
+            return text
+                .replace(Regex("""\b[0-9a-f]{7,40}\b""", RegexOption.IGNORE_CASE), "")
+                .replace(Regex("""\bhttps?://\S+"""), "")
+                .replace(Regex("""^[\s\-*•—–:>\]\[()]+"""), "")
+                .replace(Regex("""[•—–]"""), " ")
+                .replace(Regex("""\s+"""), " ")
+                .trim()
+                .lowercase()
+        }
+    }
+
+    fun combineReleases(forkReleases: List<Release>, upstreamReleases: List<Release>): List<Release> {
+        val allCodes = (forkReleases.map { it.verCode } + upstreamReleases.map { it.verCode }).distinct().sortedDescending()
+        val forkByCode = forkReleases.groupBy { it.verCode }
+        val upstreamByCode = upstreamReleases.groupBy { it.verCode }
+
+        return allCodes.mapNotNull { code ->
+            val forkRel = forkByCode[code]?.firstOrNull()
+            val upstreamRel = upstreamByCode[code]?.firstOrNull()
+
+            if (forkRel == null && upstreamRel == null) return@mapNotNull null
+
+            if (upstreamRel == null) {
+                val blocks = ArrayList<TL_iv.PageBlock>()
+                blocks.add(TL_iv.pageBlockHeading1().apply {
+                    text = TL_iv.textPlain().apply { text = "v$code" }
+                })
+                blocks.addAll(forkRel!!.changelog.blocks.orEmpty().filterNot { isVersionHeader(it, code) })
+                val rich = TL_iv.RichMessage().apply {
+                    this.blocks = blocks
+                    photos = forkRel.changelog.photos
+                    documents = forkRel.changelog.documents
+                }
+                return@mapNotNull Release(code, rich)
+            }
+
+            if (forkRel == null) {
+                val blocks = ArrayList<TL_iv.PageBlock>()
+                blocks.add(TL_iv.pageBlockHeading1().apply {
+                    text = TL_iv.textPlain().apply { text = "v$code" }
+                })
+                blocks.addAll(upstreamRel.changelog.blocks.orEmpty().filterNot { isVersionHeader(it, code) })
+                val rich = TL_iv.RichMessage().apply {
+                    this.blocks = blocks
+                    photos = upstreamRel.changelog.photos
+                    documents = upstreamRel.changelog.documents
+                }
+                return@mapNotNull Release(code, rich)
+            }
+
+            val dedup = Deduplicator()
+            val forkBlocks = forkRel.changelog.blocks.orEmpty().filterNot { isVersionHeader(it, code) }
+            for (b in forkBlocks) {
+                recordBlockTexts(b, dedup)
+            }
+
+            val upstreamBlocks = upstreamRel.changelog.blocks.orEmpty().filterNot { isVersionHeader(it, code) }
+            val filteredUpstreamBlocks = filterDuplicateBlocks(upstreamBlocks, dedup)
+
+            val combinedBlocks = ArrayList<TL_iv.PageBlock>()
+            combinedBlocks.add(TL_iv.pageBlockHeading1().apply {
+                text = TL_iv.textPlain().apply { text = "v$code" }
+            })
+
+            // Top section: Fork changes
+            if (filteredUpstreamBlocks.isNotEmpty()) {
+                combinedBlocks.add(TL_iv.pageBlockHeading2().apply {
+                    text = TL_iv.textPlain().apply {
+                        text = LocaleController.getString(R.string.InuChangelogFork)
+                    }
+                })
+            }
+            combinedBlocks.addAll(forkBlocks)
+
+            // Divider and Upstream section
+            if (filteredUpstreamBlocks.isNotEmpty()) {
+                combinedBlocks.add(TL_iv.pageBlockDivider())
+                combinedBlocks.add(TL_iv.pageBlockHeading2().apply {
+                    text = TL_iv.textPlain().apply {
+                        text = LocaleController.getString(R.string.InuChangelogUpstream)
+                    }
+                })
+                combinedBlocks.addAll(filteredUpstreamBlocks)
+            }
+
+            val combinedRich = TL_iv.RichMessage().apply {
+                this.blocks = combinedBlocks
+                photos = ArrayList((forkRel.changelog.photos.orEmpty() + upstreamRel.changelog.photos.orEmpty()).distinct())
+                documents = ArrayList((forkRel.changelog.documents.orEmpty() + upstreamRel.changelog.documents.orEmpty()).distinct())
+            }
+
+            Release(code, combinedRich)
+        }
+    }
+
+    private fun isVersionHeader(block: TL_iv.PageBlock, code: Int): Boolean {
+        if (block is TL_iv.pageBlockHeading1) {
+            val text = RichMessageLayout.getString(block.text).trim()
+            return text.equals("v$code", ignoreCase = true) || text.equals("$code", ignoreCase = true)
+        }
+        return false
+    }
+
+    private fun recordBlockTexts(block: TL_iv.PageBlock, dedup: Deduplicator) {
+        when (block) {
+            is TL_iv.pageBlockParagraph -> dedup.record(RichMessageLayout.getString(block.text))
+            is TL_iv.pageBlockBlockquote -> dedup.record(RichMessageLayout.getString(block.text))
+            is TL_iv.pageBlockHeading2 -> dedup.record(RichMessageLayout.getString(block.text))
+            is TL_iv.pageBlockHeading3 -> dedup.record(RichMessageLayout.getString(block.text))
+            is TL_iv.pageBlockList -> {
+                for (item in block.items.orEmpty()) {
+                    dedup.record(RichMessageLayout.getString(item))
+                }
+            }
+            is TL_iv.pageBlockOrderedList -> {
+                for (item in block.items.orEmpty()) {
+                    dedup.record(RichMessageLayout.getString(item))
+                }
+            }
+        }
+    }
+
+    private fun filterDuplicateBlocks(blocks: List<TL_iv.PageBlock>, dedup: Deduplicator): List<TL_iv.PageBlock> {
+        val result = ArrayList<TL_iv.PageBlock>()
+        for (block in blocks) {
+            when (block) {
+                is TL_iv.pageBlockParagraph -> {
+                    val str = RichMessageLayout.getString(block.text)
+                    if (!dedup.isDuplicate(str)) {
+                        result.add(block)
+                        dedup.record(str)
+                    }
+                }
+                is TL_iv.pageBlockBlockquote -> {
+                    val str = RichMessageLayout.getString(block.text)
+                    if (!dedup.isDuplicate(str)) {
+                        result.add(block)
+                        dedup.record(str)
+                    }
+                }
+                is TL_iv.pageBlockList -> {
+                    val remainingItems = block.items.orEmpty().filterNot { item ->
+                        val str = RichMessageLayout.getString(item)
+                        val isDup = dedup.isDuplicate(str)
+                        if (!isDup) dedup.record(str)
+                        isDup
+                    }
+                    if (remainingItems.isNotEmpty()) {
+                        val newList = TL_iv.pageBlockList().apply {
+                            items = ArrayList(remainingItems)
+                        }
+                        result.add(newList)
+                    }
+                }
+                is TL_iv.pageBlockOrderedList -> {
+                    val remainingItems = block.items.orEmpty().filterNot { item ->
+                        val str = RichMessageLayout.getString(item)
+                        val isDup = dedup.isDuplicate(str)
+                        if (!isDup) dedup.record(str)
+                        isDup
+                    }
+                    if (remainingItems.isNotEmpty()) {
+                        val newList = TL_iv.pageBlockOrderedList().apply {
+                            items = ArrayList(remainingItems)
+                        }
+                        result.add(newList)
+                    }
+                }
+                is TL_iv.pageBlockHeading2, is TL_iv.pageBlockHeading3 -> {
+                    result.add(block)
+                }
+                is TL_iv.pageBlockDivider -> {}
+                else -> {
+                    result.add(block)
+                }
+            }
+        }
+        val cleaned = ArrayList<TL_iv.PageBlock>()
+        for (i in result.indices) {
+            val b = result[i]
+            if (b is TL_iv.pageBlockHeading2 || b is TL_iv.pageBlockHeading3) {
+                val hasContentAfter = result.drop(i + 1).any { it !is TL_iv.pageBlockHeading2 && it !is TL_iv.pageBlockHeading3 && it !is TL_iv.pageBlockDivider }
+                if (hasContentAfter) cleaned.add(b)
+            } else {
+                cleaned.add(b)
+            }
+        }
+        return cleaned
+    }
+
+    private fun loadReleasesFromGitHub(
+        limit: Int,
+        versions: IntRange,
+        callback: (List<Release>?) -> Unit,
+    ) {
+        Utilities.globalQueue.postRunnable {
+            val fork = fetchGitHubReleases(GITHUB_REPO_FORK, limit)
+            val upstream = fetchGitHubReleases(GITHUB_REPO_UPSTREAM, limit)
+            val combined = combineReleases(fork, upstream).filter { it.verCode in versions }
+            AndroidUtilities.runOnUIThread {
+                callback(if (combined.isEmpty()) null else combined)
+            }
+        }
+    }
+
+    private fun fetchGitHubReleases(repo: String, limit: Int): List<Release> {
+        return runCatching {
+            val url = URI("https://api.github.com/repos/$repo/releases?per_page=$limit").toURL()
+            val conn = url.openConnection() as HttpURLConnection
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+            conn.setRequestProperty("User-Agent", "Inugram-Android")
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+            if (conn.responseCode != 200) return emptyList()
+            val text = conn.inputStream.bufferedReader().use { it.readText() }
+            val array = JSONArray(text)
+            val list = mutableListOf<Release>()
+            val verRe = Regex("""(?:\.|\b|-)(\d+)(?:-legacy)?$""")
+            for (i in 0 until array.length()) {
+                val obj = array.getJSONObject(i)
+                val tag = obj.optString("tag_name", "")
+                val body = obj.optString("body", "")
+                val verCode = verRe.find(tag)?.groupValues?.get(1)?.toIntOrNull()
+                    ?: Regex("""\b(\d+)\b""").find(tag)?.groupValues?.get(1)?.toIntOrNull()
+                    ?: continue
+                val rich = markdownToRichMessage(body)
+                list.add(Release(verCode, rich))
+            }
+            list
+        }.getOrDefault(emptyList())
+    }
+
+    private fun markdownToRichMessage(body: String): TL_iv.RichMessage {
+        val blocks = ArrayList<TL_iv.PageBlock>()
+        val currentListItems = ArrayList<TL_iv.RichText>()
+
+        fun flushList() {
+            if (currentListItems.isNotEmpty()) {
+                blocks.add(TL_iv.pageBlockList().apply {
+                    items = ArrayList(currentListItems)
+                })
+                currentListItems.clear()
+            }
+        }
+
+        for (line in body.lines()) {
+            val trimmed = line.trim()
+            if (trimmed.isEmpty()) {
+                flushList()
+                continue
+            }
+            if (trimmed.startsWith("### ")) {
+                flushList()
+                blocks.add(TL_iv.pageBlockHeading3().apply {
+                    text = TL_iv.textPlain().apply { text = trimmed.removePrefix("### ").trim() }
+                })
+            } else if (trimmed.startsWith("## ")) {
+                flushList()
+                blocks.add(TL_iv.pageBlockHeading2().apply {
+                    text = TL_iv.textPlain().apply { text = trimmed.removePrefix("## ").trim() }
+                })
+            } else if (trimmed.startsWith("# ")) {
+                flushList()
+                blocks.add(TL_iv.pageBlockHeading1().apply {
+                    text = TL_iv.textPlain().apply { text = trimmed.removePrefix("# ").trim() }
+                })
+            } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+                val itemText = trimmed.substring(2).trim()
+                currentListItems.add(TL_iv.textPlain().apply { text = itemText })
+            } else {
+                flushList()
+                blocks.add(TL_iv.pageBlockParagraph().apply {
+                    text = TL_iv.textPlain().apply { text = trimmed }
+                })
+            }
+        }
+        flushList()
+
+        return TL_iv.RichMessage().apply {
+            this.blocks = blocks
+        }
     }
 
     private fun isUpdatedInstall() = packageInfo.firstInstallTime != packageInfo.lastUpdateTime
@@ -510,14 +903,24 @@ object UpdateHelper {
     private fun stashChangelogs(msg: TLRPC.Message, info: ApkInfo, current: CurrentBuild, variant: String) {
         writeStashedReleases(listOfNotNull(createRelease(msg, variant)))
         loadReleases(10, current.versionCode + 1..info.verCode) { releases ->
-            if (!releases.isNullOrEmpty()) writeStashedReleases(releases)
+            if (!releases.isNullOrEmpty()) {
+                writeStashedReleases(releases)
+                val matching = releases.firstOrNull { it.verCode == info.verCode }
+                if (matching != null && SharedConfig.pendingAppUpdate?.version == info.verCode.toString()) {
+                    val data = SerializedData(matching.changelog.objectSize)
+                    matching.changelog.serializeToStream(data)
+                    SharedConfig.pendingAppUpdate.text = Base64.encodeToString(data.toByteArray(), Base64.NO_WRAP)
+                    data.cleanup()
+                    SharedConfig.saveConfig()
+                }
+            }
         }
     }
 
     // search results may hold a truncated rich message without all of its documents
-    private fun loadRichMessage(account: Int, messageId: Int, callback: (TLRPC.Message?) -> Unit) {
+    private fun loadRichMessage(account: Int, messageId: Int, channelId: Long = CHANNEL_ID, callback: (TLRPC.Message?) -> Unit) {
         val req = TL_iv.getRichMessage().apply {
-            peer = MessagesController.getInstance(account).getInputPeer(-CHANNEL_ID)
+            peer = MessagesController.getInstance(account).getInputPeer(-channelId)
             id = messageId
         }
         ConnectionsManager.getInstance(account).sendRequest(req) { resp, _ ->

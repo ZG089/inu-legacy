@@ -146,7 +146,7 @@ function buildForegroundVector(shapes: SvgShape[], srcW: number, srcH: number, m
 }
 
 function buildSettingsVector(shapes: SvgShape[], srcW: number, srcH: number): string {
-  return buildScaledVector(shapes, srcW, srcH, true, {
+  return buildScaledVector(shapes, srcW, srcH, false, {
     widthDp: SETTINGS_DP,
     viewport: SETTINGS_VIEWPORT,
     safe: SETTINGS_SAFE,
@@ -237,7 +237,7 @@ const foregroundInu = buildForegroundVector(fgInu.shapes, fgInu.srcW, fgInu.srcH
 const foregroundInuDebug = buildForegroundVector(fgInu.shapes, fgInu.srcW, fgInu.srcH, false, true)
 
 const monochrome = buildForegroundVector(mono.shapes, mono.srcW, mono.srcH, true)
-const settingsIcon = buildSettingsVector(mono.shapes, mono.srcW, mono.srcH)
+const settingsIcon = buildSettingsVector(fgDefault.shapes, fgDefault.srcW, fgDefault.srcH)
 const notificationIcon = buildNotificationVector(mono.shapes, mono.srcW, mono.srcH)
 
 const backgroundDefault = buildWhiteBackgroundVector()
