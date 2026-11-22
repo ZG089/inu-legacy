@@ -601,6 +601,44 @@ object UpdateHelper {
         return false
     }
 
+    private fun getListItemText(item: TL_iv.PageListItem?): String {
+        return when (item) {
+            is TL_iv.TL_pageListItemText -> RichMessageLayout.getString(item.text)
+            is TL_iv.TL_pageListItemBlocks -> {
+                item.blocks.orEmpty().joinToString("\n") { block ->
+                    when (block) {
+                        is TL_iv.pageBlockParagraph -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockBlockquote -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading1 -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading2 -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading3 -> RichMessageLayout.getString(block.text)
+                        else -> ""
+                    }
+                }
+            }
+            else -> ""
+        }
+    }
+
+    private fun getOrderedListItemText(item: TL_iv.PageListOrderedItem?): String {
+        return when (item) {
+            is TL_iv.TL_pageListOrderedItemText -> RichMessageLayout.getString(item.text)
+            is TL_iv.TL_pageListOrderedItemBlocks -> {
+                item.blocks.orEmpty().joinToString("\n") { block ->
+                    when (block) {
+                        is TL_iv.pageBlockParagraph -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockBlockquote -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading1 -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading2 -> RichMessageLayout.getString(block.text)
+                        is TL_iv.pageBlockHeading3 -> RichMessageLayout.getString(block.text)
+                        else -> ""
+                    }
+                }
+            }
+            else -> ""
+        }
+    }
+
     private fun recordBlockTexts(block: TL_iv.PageBlock, dedup: Deduplicator) {
         when (block) {
             is TL_iv.pageBlockParagraph -> dedup.record(RichMessageLayout.getString(block.text))
@@ -609,12 +647,12 @@ object UpdateHelper {
             is TL_iv.pageBlockHeading3 -> dedup.record(RichMessageLayout.getString(block.text))
             is TL_iv.pageBlockList -> {
                 for (item in block.items.orEmpty()) {
-                    dedup.record(RichMessageLayout.getString(item))
+                    dedup.record(getListItemText(item))
                 }
             }
             is TL_iv.pageBlockOrderedList -> {
                 for (item in block.items.orEmpty()) {
-                    dedup.record(RichMessageLayout.getString(item))
+                    dedup.record(getOrderedListItemText(item))
                 }
             }
         }
@@ -640,7 +678,7 @@ object UpdateHelper {
                 }
                 is TL_iv.pageBlockList -> {
                     val remainingItems = block.items.orEmpty().filterNot { item ->
-                        val str = RichMessageLayout.getString(item)
+                        val str = getListItemText(item)
                         val isDup = dedup.isDuplicate(str)
                         if (!isDup) dedup.record(str)
                         isDup
@@ -654,7 +692,7 @@ object UpdateHelper {
                 }
                 is TL_iv.pageBlockOrderedList -> {
                     val remainingItems = block.items.orEmpty().filterNot { item ->
-                        val str = RichMessageLayout.getString(item)
+                        val str = getOrderedListItemText(item)
                         val isDup = dedup.isDuplicate(str)
                         if (!isDup) dedup.record(str)
                         isDup
@@ -732,7 +770,7 @@ object UpdateHelper {
 
     private fun markdownToRichMessage(body: String): TL_iv.RichMessage {
         val blocks = ArrayList<TL_iv.PageBlock>()
-        val currentListItems = ArrayList<TL_iv.RichText>()
+        val currentListItems = ArrayList<TL_iv.PageListItem>()
 
         fun flushList() {
             if (currentListItems.isNotEmpty()) {
@@ -766,7 +804,10 @@ object UpdateHelper {
                 })
             } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
                 val itemText = trimmed.substring(2).trim()
-                currentListItems.add(TL_iv.textPlain().apply { text = itemText })
+                val listItem = TL_iv.TL_pageListItemText().apply {
+                    text = TL_iv.textPlain().apply { text = itemText }
+                }
+                currentListItems.add(listItem)
             } else {
                 flushList()
                 blocks.add(TL_iv.pageBlockParagraph().apply {
@@ -918,7 +959,11 @@ object UpdateHelper {
     }
 
     // search results may hold a truncated rich message without all of its documents
-    private fun loadRichMessage(account: Int, messageId: Int, channelId: Long = CHANNEL_ID, callback: (TLRPC.Message?) -> Unit) {
+    private fun loadRichMessage(account: Int, messageId: Int, callback: (TLRPC.Message?) -> Unit) {
+        loadRichMessage(account, messageId, CHANNEL_ID, callback)
+    }
+
+    private fun loadRichMessage(account: Int, messageId: Int, channelId: Long, callback: (TLRPC.Message?) -> Unit) {
         val req = TL_iv.getRichMessage().apply {
             peer = MessagesController.getInstance(account).getInputPeer(-channelId)
             id = messageId
