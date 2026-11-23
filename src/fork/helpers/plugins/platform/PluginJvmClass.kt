@@ -2,6 +2,7 @@ package desu.inugram.helpers.plugins.platform
 
 import androidx.annotation.Keep
 import dalvik.system.InMemoryDexClassLoader
+import desu.inugram.helpers.plugins.PluginLog
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
