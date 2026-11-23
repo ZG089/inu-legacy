@@ -7,12 +7,20 @@ import java.lang.reflect.Method
 class PluginHookContext internal constructor(
     private val method: Member,
     private val receiver: Any?,
-    internal val arguments: MutableList<Any?>,
+    private val initialArguments: Array<Any?>,
 ) {
     private val thread = Thread.currentThread()
     private var active = true
     internal var answered = false
     internal var outcome: Result<Any?> = Result.success(null)
+
+    private var mutableArguments: Array<Any?>? = null
+
+    val arguments: Array<Any?>
+        get() = mutableArguments ?: initialArguments
+
+    val argumentsModified: Boolean
+        get() = mutableArguments != null
 
     private fun checkActive() {
         check(active && Thread.currentThread() === thread) { "xposed: context is outside its invocation" }
@@ -28,16 +36,22 @@ class PluginHookContext internal constructor(
     }
     fun getArgument(index: Int): Any? {
         checkActive()
-        require(index in arguments.indices) { "xposed: argument index out of range" }
-        return arguments[index]
+        val args = arguments
+        require(index in args.indices) { "xposed: argument index out of range" }
+        return args[index]
     }
     fun setArgument(index: Int, value: Any?) {
         checkActive()
-        require(index in arguments.indices) { "xposed: argument index out of range" }
+        var args = mutableArguments
+        if (args == null) {
+            args = initialArguments.copyOf()
+            mutableArguments = args
+        }
+        require(index in args.indices) { "xposed: argument index out of range" }
         val type = (method as Executable).parameterTypes[index]
         val converted = PluginJvm.convert(value, type)
             ?: throw IllegalArgumentException("xposed: invalid argument for ${type.name}")
-        arguments[index] = converted.value
+        args[index] = converted.value
     }
     fun getReturnValue(): Any? {
         checkActive()

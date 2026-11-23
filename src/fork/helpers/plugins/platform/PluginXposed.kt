@@ -96,6 +96,11 @@ object PluginXposed : SessionResource {
         fun dispatch(receiver: Any?, args: Array<Any?>): Any? {
             val original = backup ?: synchronized(sharedSites) { checkNotNull(backup) }
             val snapshot = registrations
+            if (snapshot.isEmpty()) return invokeOriginal(original, receiver, args)
+            if (snapshot.size == 1) {
+                val site = snapshot[0]
+                return site.session.dispatch(site, receiver, args) { invokeOriginal(original, receiver, it) }
+            }
             fun next(index: Int, arguments: Array<Any?>): Any? {
                 if (index == snapshot.size) return invokeOriginal(original, receiver, arguments)
                 val site = snapshot[index]
@@ -420,7 +425,7 @@ object PluginXposed : SessionResource {
         private fun dispatchNativeHooks(entry: Site, guard: BooleanArray, receiver: Any?, args: Array<Any?>, next: (Array<Any?>) -> Any?): Any? {
             val site = entry.id
             val hooks = entry.nativeHooks
-            val context = PluginHookContext(entry.target, receiver, args.toMutableList())
+            val context = PluginHookContext(entry.target, receiver, args)
             fun runPhase(before: Boolean) = runCallbackPhase(guard) {
                 val deadline = System.nanoTime() + budgetMs * 1_000_000L
                 for (hook in if (before) hooks else hooks.asReversed()) {
@@ -441,7 +446,10 @@ object PluginXposed : SessionResource {
             }
             return try {
                 runPhase(true)
-                if (!context.answered) context.outcome = runCatching { next(context.arguments.toTypedArray()) }
+                if (!context.answered) context.outcome = runCatching {
+                    val callArgs = if (context.argumentsModified) context.arguments else args
+                    next(callArgs)
+                }
                 context.answered = false
                 runPhase(false)
                 context.outcome.getOrThrow()
