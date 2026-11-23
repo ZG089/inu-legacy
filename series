@@ -459,3 +459,4 @@ bugfix/album-caption-quotes.patch
 bugfix/widget-png-bounds.patch
 bugfix/zalgo-cap.patch
 bugfix/stickers-and-bitmaps-cache-leaks.patch
+bugfix/reactions-memory-leaks.patch

@@ -1,0 +1,55 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ZG089 <159061718+ZG089@users.noreply.github.com>
+Date: Mon, 23 Nov 2026 13:30:12 +0000
+Subject: fix memory leaks in reactions container and animated emoji dialog
+
+---
+ .../telegram/ui/Components/ReactionsContainerLayout.java  | 8 ++++++--
+ .../java/org/telegram/ui/SelectAnimatedEmojiDialog.java   | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+@@ -2108,8 +2108,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+             } else {
+                 pressedBackupImageView.getImageReceiver().clearImage();
+                 loopImageView.getImageReceiver().clearImage();
+-                AnimatedEmojiDrawable pressedDrawable = new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_LARGE, currentAccount, currentReaction.documentId);
+-                AnimatedEmojiDrawable loopDrawable = new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW, currentAccount, currentReaction.documentId);
++                AnimatedEmojiDrawable pressedDrawable = AnimatedEmojiDrawable.make(currentAccount, AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_LARGE, currentReaction.documentId);
++                AnimatedEmojiDrawable loopDrawable = AnimatedEmojiDrawable.make(currentAccount, AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW, currentReaction.documentId);
+                 if (type == TYPE_STORY || type == TYPE_STORY_LIKES || type == TYPE_STICKER_SET_EMOJI) {
+                     pressedDrawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+                     loopDrawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+@@ -2200,6 +2200,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+         @Override
+         protected void onDetachedFromWindow() {
+             super.onDetachedFromWindow();
++            AndroidUtilities.cancelRunOnUIThread(playRunnable);
++            resetAnimation();
+             preloadImageReceiver.onDetachedFromWindow();
+         }
+ 
+@@ -2455,6 +2457,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+         if (type == TYPE_MESSAGE_EFFECTS) {
+             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.availableEffectsUpdate);
+         }
++        lastVisibleViews.clear();
++        lastVisibleViewsTmp.clear();
+     }
+ 
+     @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+@@ -4945,6 +4945,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
+             release(unusedLineDrawables);
+             release(lineDrawables);
+             release(lineDrawablesTmp);
++            AnimatedEmojiSpan.release(this, animatedEmojiDrawables);
+         }
+ 
+         private void release(ArrayList<DrawingInBackgroundLine> lineDrawables) {
