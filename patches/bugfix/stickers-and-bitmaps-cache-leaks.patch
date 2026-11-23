@@ -1,0 +1,101 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ZG089 <159061718+ZG089@users.noreply.github.com>
+Date: Mon, 23 Nov 2026 13:30:01 +0000
+Subject: fix bitmaps cache and sticker decoding memory leaks
+
+---
+ .../telegram/messenger/utils/BitmapsCache.java  | 17 +++++------------
+ .../ui/Components/AnimatedFileDrawable.java     |  3 +++
+ .../org/telegram/ui/Components/EmojiView.java   | 14 ++++++++++++++
+ 3 files changed, 22 insertions(+), 12 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
+@@ -61,19 +61,11 @@ public class BitmapsCache {
+     private int tryCount;
+ 
+     public AtomicBoolean cancelled = new AtomicBoolean(false);
+-    private Runnable cleanupSharedBuffers = new Runnable() {
++    private static final Runnable cleanupSharedBuffers = new Runnable() {
+         @Override
+         public void run() {
+-            for (Thread thread : sharedBuffers.keySet()) {
+-                if (!thread.isAlive()) {
+-                    sharedBuffers.remove(thread);
+-                }
+-            }
+-            if (!sharedBuffers.isEmpty()) {
+-                AndroidUtilities.runOnUIThread(cleanupSharedBuffers, 5000);
+-            } else {
+-                cleanupScheduled = false;
+-            }
++            sharedBuffers.clear();
++            cleanupScheduled = false;
+         }
+     };
+ 
+@@ -404,7 +396,7 @@ public class BitmapsCache {
+     }
+ 
+     public void cancelCreate() {
+-//        cancelled.set(true);
++        cancelled.set(true);
+     }
+ 
+     public int getFrame(Bitmap bitmap, Metadata metadata) {
+@@ -584,6 +576,7 @@ public class BitmapsCache {
+     }
+ 
+     public void recycle() {
++        cancelCreate();
+         if (cachedFile != null) {
+             try {
+                 cachedFile.close();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+@@ -731,6 +731,9 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+             stream.cancel(true);
+             stream = null;
+         }
++        if (bitmapsCache != null) {
++            bitmapsCache.recycle();
++        }
+         // recycle() is also called from ImageLoader / finalizer threads, parents may only be invalidated on the UI thread
+         AndroidUtilities.executeOnUIThread(this::invalidateInternal);
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -6873,6 +6873,13 @@ public class EmojiView extends FrameLayout implements
+             return holder.itemView instanceof RecyclerListView;
+         }
+ 
++        @Override
++        public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
++            if (holder.itemView instanceof StickerEmojiCell) {
++                ((StickerEmojiCell) holder.itemView).getImageView().cancelLoadImage();
++            }
++        }
++
+         @Override
+         public int getItemCount() {
+             return totalItems != 0 ? totalItems + 1 : 0;
+@@ -9878,6 +9885,13 @@ public class EmojiView extends FrameLayout implements
+             return holder.getItemViewType() == 7;
+         }
+ 
++        @Override
++        public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
++            if (holder.itemView instanceof StickerEmojiCell) {
++                ((StickerEmojiCell) holder.itemView).getImageView().cancelLoadImage();
++            }
++        }
++
+         @Override
+         public int getItemCount() {
+             if (totalItems != 1) {
