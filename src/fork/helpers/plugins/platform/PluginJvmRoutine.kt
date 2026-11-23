@@ -469,6 +469,10 @@ internal class PluginJvmRoutine(
                 val handler = if (e is Abort) -1 else handlerFor(pc)
                 if (handler < 0) {
                     // a runnable or hook phase has nobody to answer, and what it changed stays changed
+                    if (e is Abort) {
+                        host.session.log.w("routine", "routine aborted: ${e.message}")
+                        return methodResult
+                    }
                     if (methodArgs != null || e !is Exception) throw e
                     host.session.log.d("routine", "failed", e)
                     return methodResult

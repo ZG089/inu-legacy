@@ -48,6 +48,19 @@ internal object PluginJvmClass {
         }.value
     }
 
+    internal fun defaultPrimitiveOrNull(type: Class<*>): Any? = when (type) {
+        Void.TYPE -> null
+        Boolean::class.javaPrimitiveType -> false
+        Byte::class.javaPrimitiveType -> 0.toByte()
+        Char::class.javaPrimitiveType -> '\u0000'
+        Short::class.javaPrimitiveType -> 0.toShort()
+        Int::class.javaPrimitiveType -> 0
+        Long::class.javaPrimitiveType -> 0L
+        Float::class.javaPrimitiveType -> 0.0f
+        Double::class.javaPrimitiveType -> 0.0
+        else -> null
+    }
+
     sealed class SuperSource {
         class Fixed(val items: List<Pair<Int?, Any?>>) : SuperSource()
         class Computed(val callback: (Class<*>, Any?, Array<Any?>) -> Any?) : SuperSource()
@@ -66,26 +79,38 @@ internal object PluginJvmClass {
         lateinit var owner: Class<*>
 
         fun invoke(self: Any?, args: Array<Any?>): Any? {
-            if (closed && returnType == Void.TYPE) return null
-            check(!closed) { "defineClass: plugin has unloaded" }
-            return runBudgeted {
-                val result = callback?.invoke(owner, self ?: owner, args)
-                if (returnType == Void.TYPE) null else convert(result, returnType, "result")
+            if (closed) return defaultPrimitiveOrNull(returnType)
+            return try {
+                runBudgeted {
+                    val result = callback?.invoke(owner, self ?: owner, args)
+                    if (returnType == Void.TYPE) null else convert(result, returnType, "result")
+                }
+            } catch (e: Throwable) {
+                if (closed) return defaultPrimitiveOrNull(returnType)
+                PluginLog.HOST.w("defineClass", "method invocation failed on ${if (::owner.isInitialized) owner.name else "unknown"}", e)
+                defaultPrimitiveOrNull(returnType)
             }
         }
 
         fun getSuperArguments(args: Array<Any?>): Array<Any?> {
             val source = superSource
-            check(!closed && source != null) { "defineClass: plugin has unloaded" }
-            val values = when (source) {
-                is SuperSource.Fixed -> source.items.map { (index, value) -> if (index != null) args[index] else value }
-                is SuperSource.Computed -> when (val result = runBudgeted { source.callback(owner, null, args) }) {
-                    is Array<*> -> result.toList()
-                    else -> error("defineClass: super must return an array")
-                }
+            if (closed || source == null) {
+                return Array(superTypes.size) { defaultPrimitiveOrNull(superTypes[it]) }
             }
-            check(values.size == superTypes.size) { "defineClass: super returned ${values.size} arguments, the super constructor takes ${superTypes.size}" }
-            return Array(values.size) { convert(values[it], superTypes[it], "super argument") }
+            return try {
+                val values = when (source) {
+                    is SuperSource.Fixed -> source.items.map { (index, value) -> if (index != null) args[index] else value }
+                    is SuperSource.Computed -> when (val result = runBudgeted { source.callback(owner, null, args) }) {
+                        is Array<*> -> result.toList()
+                        else -> error("defineClass: super must return an array")
+                    }
+                }
+                check(values.size == superTypes.size) { "defineClass: super returned ${values.size} arguments, the super constructor takes ${superTypes.size}" }
+                Array(values.size) { convert(values[it], superTypes[it], "super argument") }
+            } catch (e: Throwable) {
+                PluginLog.HOST.w("defineClass", "getSuperArguments failed on ${if (::owner.isInitialized) owner.name else "unknown"}", e)
+                Array(superTypes.size) { defaultPrimitiveOrNull(superTypes[it]) }
+            }
         }
 
         fun close() {
