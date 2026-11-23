@@ -23,7 +23,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - override Telegram's detected device performance class
 - 🐶 disable animated avatars in chats independently of video autoplay from Power Saving → Effects in chats
 - 🐶 customizable animation speed multiplier (incl. instant)
-- estimated registration date in profile - *ported & datapoints from [NagramX](https://github.com/risin42/NagramX)*
+- estimated registration date in profile - *ported from [NagramX](https://github.com/risin42/NagramX), datapoints from [telegram-id-age-research](https://github.com/sepiol026-wq/telegram-id-age-research)*
 - join/creation date in group & channel profiles
 - show linked channel in discussion group profile similar to personal channel
 - hide own phone number from ui
@@ -171,6 +171,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - 🐶 customizable text classifier (native / improved / off) - reduces false positive expansions
 - show custom emoji *after* regular ones in `:smile` emoji suggestion popup
 - "delete for both/all" default checkbox state
+- 🐶 edit text messages that are still sending: the queued request is rewritten in place (keeps order), or the edit is applied right after the send lands
 - hide "send as" picker (long-tap stickers button to reveal)
 - round recorder:
   - zoom slider below the video feed
@@ -178,6 +179,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode
   - new experimental (stock) Camera2 recorder, enabled by default
+  - 640p output and up to 4 Mbps bitrate in Camera2 recorder settings
 - stock experimental voice/round recorder settings visible in release builds
 
 ## photo viewer
@@ -315,6 +317,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - sticker creator output sent as photo when high-quality default is on
 - sticker-pack Edit button no longer ignores slower taps or inherits the recent-stickers Create button's long-press action
 - sticker editor send/favorites menu uses the editor's dark background instead of the app's light theme; other scrim menus also respect their local theme
+- non-square lottie animations (QR login, folder in/out, 2FA, calls log, voice mic icons, ...) no longer stretched to their square-ish target size (stock's new tlottie renderer scales axes independently; rlottie fitted and centered them)
 - non-square webm stickers rendered off-center in the emoji panel (precached frames were blitted top-left and scaled by width only)
 - webm sticker permanently stuck blank until the app is restarted (an image load cancelled mid-flight published a decoder-less drawable into the animation cache, whose stream stayed cancelled and which never retried decoding)
 - webm sticker stuck blank when its download finished between the stream's availability check and its wait (the finish notification was lost and the decoder thread blocked forever)
@@ -462,3 +465,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - hashtag search in another channel (`#tag@channel`): no more huge empty gap above the results, last message in "show as chat" no longer hidden under the bottom bar, long-tapping a reaction on a channel post shows the reaction instead of failing to load reactors
 - search result previews with a media thumbnail no longer drift to the right while scrolling
 - inline bot restriction checked against the stickers permission instead of the inline one: inline results were blocked in chats that only banned stickers, and offered (then failed with `CHAT_SEND_INLINE_FORBIDDEN`) in chats that only banned inline bots
+- album caption quotes: wrong width and clipped expand/collapse in compact mode, dead tap zone on the right, missing press animation when tapped right of the first image (stock bug: each album cell keeps its own caption copy, only the left one draws it)
+- widget images: hostile PNG chunk lengths no longer crash or hang the app, and deflate bombs are capped at the declared image size
+- zalgo capped at 2 combining marks per character in messages and captions, like desktop (stock stripped every accent from messages over 200 chars and left captions uncapped)
