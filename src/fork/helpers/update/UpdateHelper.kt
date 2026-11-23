@@ -87,6 +87,9 @@ object UpdateHelper {
     private var inflightSince = 0L
 
     @Volatile
+    private var startupCheckDone = false
+
+    @Volatile
     var pendingBetaUpdate: BetaUpdate? = null
         private set
 
@@ -119,8 +122,30 @@ object UpdateHelper {
             whenDone?.run()
             return
         }
-        if (!force && System.currentTimeMillis() - InuConfig.UPDATE_LAST_CHECK_MS.value < CHECK_INTERVAL_MS) {
+        val isStartup = !startupCheckDone
+        startupCheckDone = true
+        if (!force && !isStartup && System.currentTimeMillis() - InuConfig.UPDATE_LAST_CHECK_MS.value < CHECK_INTERVAL_MS) {
             whenDone?.run()
+            return
+        }
+        val account = UserConfig.selectedAccount
+        val cm = ConnectionsManager.getInstance(account)
+        if (cm.connectionState != ConnectionsManager.ConnectionStateConnected) {
+            var observer: NotificationCenter.NotificationCenterDelegate? = null
+            var timeoutRunnable: Runnable? = null
+            fun done() {
+                observer?.let { NotificationCenter.getInstance(account).removeObserver(it, NotificationCenter.didUpdateConnectionState) }
+                timeoutRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+                check { whenDone?.run() }
+            }
+            observer = NotificationCenter.NotificationCenterDelegate { id, _, _ ->
+                if (id == NotificationCenter.didUpdateConnectionState && cm.connectionState == ConnectionsManager.ConnectionStateConnected) {
+                    done()
+                }
+            }
+            NotificationCenter.getInstance(account).addObserver(observer, NotificationCenter.didUpdateConnectionState)
+            timeoutRunnable = Runnable { done() }
+            AndroidUtilities.runOnUIThread(timeoutRunnable, 10000)
             return
         }
         check { whenDone?.run() }
@@ -148,8 +173,11 @@ object UpdateHelper {
     fun clearPendingIfInstalled() {
         val pending = SharedConfig.pendingAppUpdate ?: return
         val current = currentBuild()
-        if (pending.version == current.versionCode.toString()) {
+        val pendingVer = pending.version?.toIntOrNull() ?: 0
+        if (pendingVer <= current.versionCode) {
             clearPending()
+        } else {
+            pendingBetaUpdate = BetaUpdate(pending.version, pendingVer, null)
         }
     }
 
@@ -318,8 +346,14 @@ object UpdateHelper {
                     finish(callback, CheckResult.UpToDate)
                     return
                 }
-                stashChangelogs(msg, info, current, variant)
-                finish(callback, CheckResult.Updated(applyUpdate(msg, info, current, variant)))
+                loadReleases(10, current.versionCode + 1..info.verCode) { releases ->
+                    val fallbackRelease = createRelease(msg, variant)
+                    val allReleases = if (!releases.isNullOrEmpty()) releases else listOfNotNull(fallbackRelease)
+                    writeStashedReleases(allReleases)
+                    val mergedChangelog = mergeReleasesChangelog(allReleases)
+                    val updateObj = applyUpdate(msg, info, current, variant, mergedChangelog)
+                    finish(callback, CheckResult.Updated(updateObj))
+                }
             }
             if (latest?.rich_message?.part == true) loadRichMessage(account, latest.id, ::onLoaded)
             else onLoaded(latest)
@@ -670,6 +704,36 @@ object UpdateHelper {
         return false
     }
 
+    fun mergeReleasesChangelog(releases: List<Release>): TL_iv.RichMessage {
+        val sorted = releases.sortedByDescending { it.verCode }
+        val combinedBlocks = ArrayList<TL_iv.PageBlock>()
+        val combinedPhotos = ArrayList<TLRPC.Photo>()
+        val combinedDocs = ArrayList<TLRPC.Document>()
+
+        sorted.forEachIndexed { index, rel ->
+            if (index > 0) {
+                combinedBlocks.add(TL_iv.pageBlockDivider())
+            }
+            val blocks = rel.changelog.blocks.orEmpty()
+            val firstBlock = blocks.firstOrNull()
+            val hasVersionHeading = firstBlock is TL_iv.pageBlockHeading1 && isVersionHeader(firstBlock, rel.verCode)
+            if (!hasVersionHeading) {
+                combinedBlocks.add(TL_iv.pageBlockHeading1().apply {
+                    text = TL_iv.textPlain().apply { text = "v${rel.verCode}" }
+                })
+            }
+            combinedBlocks.addAll(blocks)
+            rel.changelog.photos?.let { combinedPhotos.addAll(it) }
+            rel.changelog.documents?.let { combinedDocs.addAll(it) }
+        }
+
+        return TL_iv.RichMessage().apply {
+            this.blocks = combinedBlocks
+            photos = combinedPhotos.distinctBy { it.id }.toCollection(ArrayList())
+            documents = combinedDocs.distinctBy { it.id }.toCollection(ArrayList())
+        }
+    }
+
     private fun getListItemText(item: TL_iv.PageListItem?): String {
         return when (item) {
             is TL_iv.TL_pageListItemText -> RichMessageLayout.getString(item.text)
@@ -972,15 +1036,16 @@ object UpdateHelper {
         activity.window.decorView.doOnLayout {
             Looper.myQueue().addIdleHandler {
                 var disabled = false
+                val merged = mergeReleasesChangelog(releases)
                 ChangelogSheet(
                     activity,
                     LocaleController.getString(R.string.InuWhatsNew),
-                    releases.map {
+                    listOf(
                         RichMessageLayout.PreviewView(activity, UserConfig.selectedAccount, null).apply {
-                            set(it.changelog)
+                            set(merged)
                             setPadding(AndroidUtilities.dp(23f), AndroidUtilities.dp(15f), AndroidUtilities.dp(23f), AndroidUtilities.dp(8f))
                         }
-                    },
+                    ),
                     LocaleController.getString(R.string.InuWhatsNewDontShowAgain),
                     {
                         InuConfig.WHATS_NEW_ON_UPDATE.value = false
@@ -1011,18 +1076,18 @@ object UpdateHelper {
     }
 
     private fun stashChangelogs(msg: TLRPC.Message, info: ApkInfo, current: CurrentBuild, variant: String) {
-        writeStashedReleases(listOfNotNull(createRelease(msg, variant)))
+        val fallback = listOfNotNull(createRelease(msg, variant))
+        writeStashedReleases(fallback)
         loadReleases(10, current.versionCode + 1..info.verCode) { releases ->
-            if (!releases.isNullOrEmpty()) {
-                writeStashedReleases(releases)
-                val matching = releases.firstOrNull { it.verCode == info.verCode }
-                if (matching != null && SharedConfig.pendingAppUpdate?.version == info.verCode.toString()) {
-                    val data = SerializedData(matching.changelog.objectSize)
-                    matching.changelog.serializeToStream(data)
-                    SharedConfig.pendingAppUpdate.text = Base64.encodeToString(data.toByteArray(), Base64.NO_WRAP)
-                    data.cleanup()
-                    SharedConfig.saveConfig()
-                }
+            val all = if (!releases.isNullOrEmpty()) releases else fallback
+            writeStashedReleases(all)
+            if (SharedConfig.pendingAppUpdate?.version == info.verCode.toString()) {
+                val merged = mergeReleasesChangelog(all)
+                val data = SerializedData(merged.objectSize)
+                merged.serializeToStream(data)
+                SharedConfig.pendingAppUpdate.text = Base64.encodeToString(data.toByteArray(), Base64.NO_WRAP)
+                data.cleanup()
+                SharedConfig.saveConfig()
             }
         }
     }
@@ -1065,10 +1130,15 @@ object UpdateHelper {
             val info = full?.let { extractApkInfo(it, variant) } ?: return
             val current = currentBuild()
             if (!isNewer(info, current)) return
-            stashChangelogs(full, info, current, variant)
-            applyUpdate(full, info, current, variant)
-            revealPendingUpdate()
-            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+            loadReleases(10, current.versionCode + 1..info.verCode) { releases ->
+                val fallbackRelease = createRelease(full, variant)
+                val allReleases = if (!releases.isNullOrEmpty()) releases else listOfNotNull(fallbackRelease)
+                writeStashedReleases(allReleases)
+                val mergedChangelog = mergeReleasesChangelog(allReleases)
+                applyUpdate(full, info, current, variant, mergedChangelog)
+                revealPendingUpdate()
+                InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+            }
         }
         AndroidUtilities.runOnUIThread {
             if (rich.part) loadRichMessage(account, msg.id, ::onLoaded)
@@ -1081,8 +1151,9 @@ object UpdateHelper {
         info: ApkInfo,
         current: CurrentBuild,
         variant: String,
+        mergedChangelog: TL_iv.RichMessage? = null,
     ): TLRPC.TL_help_appUpdate {
-        val changelog = extractChangelog(msg, variant)
+        val changelog = mergedChangelog ?: extractChangelog(msg, variant)
         val data = SerializedData(changelog.objectSize)
         changelog.serializeToStream(data)
 
@@ -1121,7 +1192,9 @@ object UpdateHelper {
 
     private fun finish(callback: ((CheckResult) -> Unit)?, result: CheckResult) {
         inflight = false
-        InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+        if (result is CheckResult.UpToDate || result is CheckResult.Updated) {
+            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+        }
         callback?.invoke(result)
     }
 

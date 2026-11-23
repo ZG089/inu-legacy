@@ -186,6 +186,7 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
                 if (InuConfig.UPDATE_CHANNEL.value != which) {
                     InuConfig.UPDATE_CHANNEL.value = which
                     UpdateHelper.clearPending()
+                    listView?.adapter?.update(true)
                 }
             }
 
