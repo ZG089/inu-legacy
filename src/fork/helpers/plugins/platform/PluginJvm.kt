@@ -307,7 +307,10 @@ object PluginJvm : SessionResource {
 
         fun close() {
             live = false
-            definedClasses.forEach { it.close() }
+            definedClasses.forEach {
+                it.close()
+                tableCache.remove(it.type)
+            }
             definedClasses.clear()
             pendingClasses.values.forEach { it.close() }
             pendingClasses.clear()

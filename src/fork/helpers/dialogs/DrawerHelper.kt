@@ -89,6 +89,26 @@ object DrawerHelper {
     private var updateObserver: NotificationCenter.NotificationCenterDelegate? = null
     private var menuDrawableRef: MenuDrawable? = null
     private var statusPopup: SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow? = null
+    private var lifecycleRegistered = false
+
+    private fun installActivityLifecycle(context: Context) {
+        if (lifecycleRegistered) return
+        val app = context.applicationContext as? android.app.Application ?: return
+        lifecycleRegistered = true
+        app.registerActivityLifecycleCallbacks(object : android.app.Application.ActivityLifecycleCallbacks {
+            override fun onActivityDestroyed(activity: Activity) {
+                if (activity is LaunchActivity || activity === sideMenu?.context) {
+                    teardown(null)
+                }
+            }
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+            override fun onActivityStarted(activity: Activity) = Unit
+            override fun onActivityResumed(activity: Activity) = Unit
+            override fun onActivityPaused(activity: Activity) = Unit
+            override fun onActivityStopped(activity: Activity) = Unit
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+        })
+    }
 
     /** Root fragment on startup: stock `addFragmentToStack` + navigation drawer wiring. */
     @JvmStatic
@@ -116,11 +136,11 @@ object DrawerHelper {
     }
 
     @JvmStatic
-    fun teardown(layout: INavigationLayout?) {
-        val dlc = layout?.drawerLayoutContainer ?: return
-        val controller = dlc.inu_drawer ?: return
-        controller.detach()
-        dlc.inu_drawer = null
+    fun teardown(layout: INavigationLayout? = null) {
+        val dlc = layout?.drawerLayoutContainer
+        val controller = dlc?.inu_drawer
+        controller?.detach()
+        if (dlc != null) dlc.inu_drawer = null
         adapter = null
         sideMenu = null
         sideMenuContainer = null
@@ -128,6 +148,7 @@ object DrawerHelper {
         bottomFadeView = null
         updateLayout = null
         menuDrawableRef = null
+        dismissStatusPopup()
     }
 
     fun refreshUpdateState() {
@@ -233,6 +254,7 @@ object DrawerHelper {
         installThemeObserver()
         installProxyObserver()
         installUpdateLayout(context as? Activity, container, sm)
+        installActivityLifecycle(context)
     }
 
     private fun attachAccountReorder(sm: RecyclerListView, adapter: DrawerLayoutAdapter) {

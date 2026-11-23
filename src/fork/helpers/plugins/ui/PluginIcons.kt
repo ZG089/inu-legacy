@@ -90,7 +90,7 @@ object PluginIcons {
     private val svgMasks = LruCache<String, Bitmap>(SVG_CACHE_SIZE)
     private val boundSpecs = WeakHashMap<RLottieImageView, String>()
     private val emojiBindings = WeakHashMap<RLottieImageView, WeakReference<EmojiBinding>>()
-    private val avatarBindings = WeakHashMap<RLottieImageView, AvatarBinding>()
+    private val avatarBindings = WeakHashMap<RLottieImageView, WeakReference<AvatarBinding>>()
 
     /** `p<account>:<dialogId>`; account -1 is the selected one, the dialog id is the plugin's marked form */
     internal fun parseAvatarSpec(spec: String): Pair<Int, Long>? {
@@ -130,10 +130,12 @@ object PluginIcons {
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     }
 
-    private class AvatarBinding(private val view: RLottieImageView, val drawable: AvatarIconDrawable) : View.OnAttachStateChangeListener {
+    private class AvatarBinding(view: RLottieImageView, val drawable: AvatarIconDrawable) : View.OnAttachStateChangeListener {
+        private val viewRef = WeakReference(view)
+
         fun attach() {
-            view.addOnAttachStateChangeListener(this)
-            if (view.isAttachedToWindow) drawable.receiver.onAttachedToWindow()
+            viewRef.get()?.addOnAttachStateChangeListener(this)
+            if (viewRef.get()?.isAttachedToWindow == true) drawable.receiver.onAttachedToWindow()
         }
 
         override fun onViewAttachedToWindow(view: View) {
@@ -145,7 +147,7 @@ object PluginIcons {
         }
 
         fun dispose() {
-            view.removeOnAttachStateChangeListener(this)
+            viewRef.get()?.removeOnAttachStateChangeListener(this)
             drawable.receiver.onDetachedFromWindow()
         }
     }
@@ -228,7 +230,7 @@ object PluginIcons {
         if (spec[0] == 'p') {
             val (accountId, dialogId) = parseAvatarSpec(spec) ?: return false
             val binding = AvatarBinding(view, AvatarIconDrawable(view, accountId, dialogId, AndroidUtilities.dp(sizeDp)))
-            avatarBindings[view] = binding
+            avatarBindings[view] = WeakReference(binding)
             view.setImageDrawable(binding.drawable)
             binding.attach()
             return true
@@ -281,7 +283,7 @@ object PluginIcons {
     fun clearIcon(view: RLottieImageView) {
         boundSpecs.remove(view)
         emojiBindings.remove(view)?.get()?.dispose()
-        avatarBindings.remove(view)?.dispose()
+        avatarBindings.remove(view)?.get()?.dispose()
         view.stopAnimation()
         view.clearAnimationDrawable()
     }
